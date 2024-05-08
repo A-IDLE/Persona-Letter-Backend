@@ -135,9 +135,12 @@ def embed_letter(letter):
     )
     
     docs.append(doc)
+    
+    print("EMBEDDING LETTER++++++++++++++++++++++++++++++")
 
     # vector db 가 있는 경우
     if os.path.exists(vector_db_path):
+        print("vector db exists")
         # vector db를 불러온다
         db = load_vector_db()
 
@@ -153,6 +156,7 @@ def embed_letter(letter):
 
         print("FAISS database updated and saved.")
     else:
+        print()
         # 없는 경우 만든다
         os.makedirs(vector_db_path)
         # Embed texts

@@ -6,12 +6,13 @@ from api.endpoints.write_letter import router
 from models.database import init_db
 from models import *
 from services.others.setup import character_setup_by_names
-# from api.routers.routers import router
+from services.vector_database import init_vectorDB
 
 fastapi_app = FastAPI()
 
 # Initialize the database
-init_db()  # Call init_db to create the database tables at startup
+init_db()  
+init_vectorDB()
 
 # Mount the router
 fastapi_app.include_router(router)
