@@ -7,10 +7,18 @@ from utils.utils import load_pdf, load_txt
 
 
 def load_faiss_retriever():
+    # db = load_vector_db()
+    # faiss_retriever = db.as_retriever(serach_type="mmr", search_kwargs={"k":20})
+    
     db = load_vector_db()
-    faiss_retriever = db.as_retriever(serach_type="mmr", search_kwargs={"k":1})
+
+    faiss_retriever = db.as_retriever(search_type="mmr", search_kwargs={
+        "k": 20,
+        "filter": {'reception_status': 'sending'}  
+    })
 
     return faiss_retriever
+
 
 
 def load_bm25_retriever(path):

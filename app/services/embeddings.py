@@ -125,6 +125,9 @@ def embed_letter(letter: Letter):
     embeddings_model = OpenAIEmbeddings(model=EMBEDDING_MODEL) # 사용할 embedding 모델
     
     
+    splitter = RecursiveCharacterTextSplitter(chunk_size=50, chunk_overlap=10)
+    
+    
     docs =[]
     doc = Document(
         page_content=letter.letter_content,
@@ -138,6 +141,10 @@ def embed_letter(letter: Letter):
     
     docs.append(doc)
     
+    
+    split_docs = splitter.split_documents(docs) if docs else [] # 업로드된 파일 쪼개기
+    print(f"\n\nSPLIT DOCS 총 문서수 : {len(split_docs)}\n\n")
+    
     print("EMBEDDING LETTER++++++++++++++++++++++++++++++")
 
     # vector db 가 있는 경우
@@ -147,7 +154,7 @@ def embed_letter(letter: Letter):
         db = load_vector_db()
 
         # 불러온 db에 벡터 추가
-        db2 = FAISS.from_documents(docs, embeddings_model)
+        db2 = FAISS.from_documents(split_docs, embeddings_model)
         db.merge_from(db2)
 
         # db 저장
@@ -162,7 +169,7 @@ def embed_letter(letter: Letter):
         # 없는 경우 만든다
         os.makedirs(vector_db_path)
         # Embed texts
-        db = FAISS.from_documents(docs, embeddings_model)
+        db = FAISS.from_documents(split_docs, embeddings_model)
         # db 저장
         db.save_local(
             folder_path=vector_db_path,

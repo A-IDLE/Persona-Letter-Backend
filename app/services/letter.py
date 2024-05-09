@@ -14,21 +14,56 @@ def generate_questions(letter):
     # # 총 몇개의 질문을 만들지
     # max_questions = 3
 
+    # prompt_text = """
+    #         You are an AI assistant tasked with generation of 3 questions to explore deeper based on the following letter
+            
+    #         ## Letter
+    #         {letter}
+            
+    #         Please answer in format only, without any other content.
+            
+    #         """
+            
+            
     prompt_text = """
-            You are an AI assistant tasked with generation of 3 questions to explore deeper based on the following letter
-            
-            ## Letter
-            {letter}
-            
-            Please answer in format only, without any other content.
+        You are an AI assistant tasked with using a given format to find the content that needs to be searched for a given context.
+        Please answer in format only, without any other content. Please find at least 3 and no more than 10 items.
+        Returns the found contents as a Python list.
+        #question:
+        {question}
             
             """
+            
+            
+    # prompt_text = """
+    # #user's letter:
+    # {question}
+    
+    
+    # These are the steps that you need to follow
+    # ## Step 1
+    # Extract the main keywords/topics from the user's letter.
+    # ## Step 2
+    # Extract the user's intent from the user's letter.
+    # ## Step 3
+    # Based on the user's interest in [Keywords/Topics] and their intent to [Intent], answer in the format below.
+    
+    # #format:
+    # keyword/topics:
+    
+    # intent:
+        
+    # """
+            
+            
+            
+            
     prompt = PromptTemplate.from_template(prompt_text)
 
     llm = load_model()
     
     llm_chain = (
-         {"letter": RunnablePassthrough()}
+         {"question": RunnablePassthrough()}
         | prompt
         | llm
         | StrOutputParser()
@@ -42,10 +77,15 @@ def retrieve_letter(questions):
     retriever = load_faiss_retriever()
     letters = retriever.invoke(questions)
     
-    print("THIS IS RETRIEVED LETTER \n"+"****"*10)
-    print(letters)
+    print("\n\n\n\nTHIS IS RETRIEVED LETTERS \n"+"****"*10)
+    for letter in letters:
+        
+        print("\n\n")
+        print(letter.page_content)
+        print("\n\n")
+        
+    print("RETRIEVAL DONE \n\n\n\n"+"****"*10)
     
-    print("RETRIEVAL DONE \n"+"****"*10)
 
     return letters
 
@@ -84,8 +124,7 @@ def write_letter(letter):
     prompt = PromptTemplate.from_template(final_prompt)
     
     
-    print("THIS IS FINAL PROMPT \n\n")
-    print(prompt)
+   
     
     
     ## 2. LLM
@@ -121,16 +160,15 @@ def write_letter_character(letter_send: Letter):
     character_name = character.character_name
     
     related_letters = retrieve_through_letter(letter)
+    
     related_letters_str = [document_to_string(related_letter) for related_letter in related_letters]
     
+    refined_retrieved_info = refining_retrieved_info(related_letters_str, letter)
+    
+    
+    
     added_prompt =(
-        f"""
-        
-        ## Reference
-        {related_letters_str}
-        
-        """ 
-    )
+        f"""\n\n## REFERENCE INFO\n{refined_retrieved_info}""")
 
     
     ## 1. Prompt
@@ -141,8 +179,14 @@ def write_letter_character(letter_send: Letter):
     prompt = PromptTemplate.from_template(final_prompt)
     
     
-    print("THIS IS FINAL PROMPT \n\n")
-    print(prompt)
+    
+    print("\n\n\n\nTHIS IS FINAL PROMPT \n\n")
+    print(final_prompt)
+    print("\n\n"+"****"*10+"\n\n\n\n")
+    
+    
+    # print("THIS IS FINAL PROMPT \n\n")
+    # print(prompt)
     
     
     ## 2. LLM
@@ -170,6 +214,58 @@ def write_letter_character(letter_send: Letter):
         letter_receiving.created_time = datetime.now()
 
         return letter_receiving
+    
+    except Exception as e:
+        ("An error occurred: " + str(e))
+        pass
+    
+
+def refining_retrieved_info(retrieved_info: str, letter: str):
+    
+    promt_text = f"""
+        # Original Letter:
+        {letter}
+        
+        
+        # Retrieved_info:
+        {retrieved_info}
+        
+        from above delete all the retrieved info that is not relevant to the original letter.
+        
+        answer only in format below:
+        
+        #Format
+        - info1
+        - info2
+        - info3
+    
+    """
+    
+    prompt = PromptTemplate.from_template(promt_text)
+    
+    ## 2. LLM
+    llm = load_model()
+    
+    ## 3. Chain
+    chain = (
+        { "letter": RunnablePassthrough()}
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
+    
+    try:
+        
+        response = chain.invoke(letter)
+        
+        
+        print("\n\n\n\nTHIS IS REFINED RETRIEVED INFO \n\n")
+        print(response)
+        print("-----"*10)
+        print("check 123")
+        print("\n\n\n\n")
+
+        return response
     
     except Exception as e:
         ("An error occurred: " + str(e))
