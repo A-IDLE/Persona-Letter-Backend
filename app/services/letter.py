@@ -42,8 +42,10 @@ def retrieve_letter(questions):
     retriever = load_faiss_retriever()
     letters = retriever.invoke(questions)
     
-    print("this is retrieved letters \n"+"****"*10)
+    print("THIS IS RETRIEVED LETTER \n"+"****"*10)
     print(letters)
+    
+    print("RETRIEVAL DONE \n"+"****"*10)
 
     return letters
 

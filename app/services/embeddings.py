@@ -7,6 +7,7 @@ from langchain_core.documents.base import Document
 from langchain.storage import LocalFileStore
 from utils.utils import load_pdf, load_txt, identify_path
 from services.vector_database import load_vector_db
+from models.models import Letter
 import os
 
 
@@ -114,7 +115,7 @@ def embed_docs(docs_path):
         index_name= CACHE_DB_INDEX,
     )
     
-def embed_letter(letter):
+def embed_letter(letter: Letter):
     
     # 환경변수들 불러오기
     load_dotenv()
@@ -126,11 +127,12 @@ def embed_letter(letter):
     
     docs =[]
     doc = Document(
-        page_content=letter.content,
+        page_content=letter.letter_content,
         metadata={
-            "sender":letter.sender_name,
-            "recevier":letter.receiver_name,
-            "created time":letter.created_date,
+            "character_id":letter.character_id,
+            "user_id":letter.user_id,
+            "reception_status":letter.reception_status,
+            "created_time":letter.created_time,
         }
     )
     
