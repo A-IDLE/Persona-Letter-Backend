@@ -7,8 +7,8 @@ from .base import Base
 
 
 # Set up logging
-logging.basicConfig()
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+# logging.basicConfig()
+# logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 # 연결 DB 정의
 # DB_URL = 'sqlite:///todo.sqlite3'

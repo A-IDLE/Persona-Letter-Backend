@@ -1,5 +1,6 @@
 from services.letter import write_letter_character
 from repository.letter import Letter
+from repository.letter import get_letter_by_id
 from services.embeddings import embed_letter
 from datetime import datetime
 from schemas.schemas import LetterDto
@@ -36,3 +37,7 @@ def save_letter(letter: Letter):
     except Exception as e:
         # The session is automatically rolled back by the context manager.
         return f"Error saving the letter: {str(e)}"
+    
+
+def get_a_letter(letter_id: int):
+    return get_letter_by_id(letter_id)
