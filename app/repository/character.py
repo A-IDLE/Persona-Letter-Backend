@@ -1,5 +1,6 @@
 from models.models import Character
 from models.database import SessionLocal    
+
     
 def create_character(character: Character):
     try:
@@ -9,6 +10,14 @@ def create_character(character: Character):
             return character
     except Exception as e:
         return f"Error saving the character: {str(e)}"
+    
+def get_all_characters_for_main():
+    try:
+        with SessionLocal() as session:
+            characters = session.query(Character.series, Character.character_id,Character.character_image_url,Character.character_name).all()
+            return characters
+    except Exception as e:
+        return f"Error getting the character: {str(e)}"
 
 def get_character_by_name(character_name: str):
     try:
