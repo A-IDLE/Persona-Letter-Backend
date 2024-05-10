@@ -49,3 +49,11 @@ def init_db():
     """Create database tables."""
     
     Base.metadata.create_all(engine)
+
+# 조회
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
