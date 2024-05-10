@@ -16,6 +16,7 @@ class Character(Base):
     etymology = Column(Text)
     examples_tone_of_voice = Column(Text)
     character_image_url = Column(String(2048))
+    series = Column(String(1024))
     created_time = Column(DateTime, server_default=func.now())
     updated_time = Column(DateTime, onupdate=func.now())
     
