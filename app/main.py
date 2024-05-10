@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import uvicorn
 from dotenv import load_dotenv
 from pathlib import Path
+from api.endpoints.inbox_letter import router as router_inbox
 from api.endpoints.letter_router import router
 from api.endpoints.character_router import router as router_character
 # from api.router import router
@@ -13,6 +14,14 @@ from fastapi.middleware.cors import CORSMiddleware
 
 fastapi_app = FastAPI()
 
+fastapi_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+)
+
 # Initialize the database
 init_db()  
 init_vectorDB()
@@ -20,6 +29,7 @@ init_vectorDB()
 # Mount the router
 fastapi_app.include_router(router)
 fastapi_app.include_router(router_character)
+fastapi_app.include_router(router_inbox)
 
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
