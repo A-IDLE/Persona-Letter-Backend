@@ -1,14 +1,30 @@
 from fastapi import FastAPI
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware  # CORS 미들웨어 임포트
 from dotenv import load_dotenv
 from pathlib import Path
 from api.endpoints.write_letter import router
+from api.endpoints.get_mails import router as router2
+from api.endpoints.get_a_letter import router as router3
 from models.database import init_db
 from models import *
 from services.others.setup import character_setup_by_names
 from services.vector_database import init_vectorDB
 
+# 맥 오류 해결 Error #15: Initializing libiomp5.dylib, but found libiomp5.dylib already initialized
+import os
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
+
 fastapi_app = FastAPI()
+
+# CORS 설정 추가
+fastapi_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # React 앱의 호스트와 포트
+    allow_credentials=True,
+    allow_methods=["*"],  # 모든 메소드 허용
+    allow_headers=["*"],  # 모든 헤더 허용
+)
 
 # Initialize the database
 init_db()  
@@ -16,6 +32,8 @@ init_vectorDB()
 
 # Mount the router
 fastapi_app.include_router(router)
+fastapi_app.include_router(router2)
+fastapi_app.include_router(router3)
 
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)

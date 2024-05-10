@@ -74,7 +74,7 @@ def write_letter(letter):
 
     
     ## 1. Prompt
-    file_name = "hermione_markdown_including_pottermore"
+    file_name = "hermione_markdown_0509"
     
     hermione_prompt = load_prompt(file_name)
     final_prompt = hermione_prompt + added_prompt
@@ -115,7 +115,7 @@ def write_letter_character(letter_send: Letter):
     
     # character_id를 통해서 character 찾는다
     character = get_character_by_id(letter_send.character_id)
-    
+
     character_name = character.character_name
     
     related_letters = retrieve_through_letter(letter)
@@ -124,7 +124,7 @@ def write_letter_character(letter_send: Letter):
     added_prompt =(
         f"""
         
-        ## Reference
+        ## refering information that you remember
         {related_letters_str}
         
         """ 
