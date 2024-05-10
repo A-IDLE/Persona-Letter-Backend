@@ -5,34 +5,35 @@ from langchain.retrievers import EnsembleRetriever
 from utils.utils import load_pdf, load_txt
 
 
-
 def load_faiss_retriever():
     # db = load_vector_db()
     # faiss_retriever = db.as_retriever(serach_type="mmr", search_kwargs={"k":20})
-    
+
     db = load_vector_db()
 
     faiss_retriever = db.as_retriever(search_type="mmr", search_kwargs={
         "k": 20,
-        "filter": {'reception_status': 'sending'}  
+        "filter": {'reception_status': 'sending'}
     })
 
     return faiss_retriever
 
 
-
 def load_bm25_retriever(path):
 
     # splitter 설정
-    splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=150)
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1500, chunk_overlap=150)
 
     pdf_documents = load_pdf(path) if path else []
-    pdf_docs = splitter.split_documents(pdf_documents) if pdf_documents else [] # 업로드된 파일 쪼개기
+    pdf_docs = splitter.split_documents(
+        pdf_documents) if pdf_documents else []  # 업로드된 파일 쪼개기
     print(f"PDF의 총 문서수 : {len(pdf_docs)}")
-    
-    ## .txt 파일 업로드
+
+    # .txt 파일 업로드
     txt_documents = load_txt(path) if path else []
-    txt_docs = splitter.split_documents(txt_documents) if txt_documents else [] # 업로드된 파일 쪼개기
+    txt_docs = splitter.split_documents(
+        txt_documents) if txt_documents else []  # 업로드된 파일 쪼개기
     print(f".txt의 총 문서수 : {len(txt_docs)}")
 
     # .pdf 과 .txt 병합
@@ -47,15 +48,41 @@ def load_bm25_retriever(path):
 
     return bm25_retriever
 
+
 def load_ensemble_retriever(path):
 
     faiss_retriever = load_faiss_retriever()
     bm25_retriever = load_bm25_retriever(path)
 
     ensemble_retriever = EnsembleRetriever(
-        retrievers = [bm25_retriever, faiss_retriever],
-        weights = [0.6, 0.4],
+        retrievers=[bm25_retriever, faiss_retriever],
+        weights=[0.6, 0.4],
         search_type="mmr",
     )
 
     return ensemble_retriever
+
+
+def load_tuned_faiss_retriever(user_id: int, character_id: int):
+    """
+    특정 사용자와 캐릭터에 대한 튜닝된 faiss retriever를 반환합니다.
+    
+    Returns a tuned faiss retriever for a specific user and character.
+    
+    Args:
+        user_id (int): 사용자 id
+        character_id (int): 캐릭터 id
+    """
+
+    db = load_vector_db()
+
+    faiss_retriever = db.as_retriever(search_type="mmr", search_kwargs={
+        "k": 30,
+        "filter": {
+            'reception_status': 'sending',
+            'user_id': user_id,
+            'character_id': character_id
+        }
+    })
+
+    return faiss_retriever

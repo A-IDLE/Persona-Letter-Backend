@@ -1,7 +1,7 @@
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.prompts import PromptTemplate
-from services.retriever import load_faiss_retriever
+from services.retriever import load_faiss_retriever, load_tuned_faiss_retriever
 from services.model import load_model
 from utils.utils import document_to_string, load_prompt
 from services.prompt import load_character_prompt
@@ -73,8 +73,8 @@ def generate_questions(letter):
     return response
 
 
-def retrieve_letter(questions):
-    retriever = load_faiss_retriever()
+def retrieve_letter(questions:str, user_id:int, character_id:int):
+    retriever = load_tuned_faiss_retriever(user_id, character_id)
     letters = retriever.invoke(questions)
     
     print("\n\n\n\nTHIS IS RETRIEVED LETTERS \n"+"****"*10)
@@ -90,12 +90,12 @@ def retrieve_letter(questions):
     return letters
 
 
-def retrieve_through_letter(letter):
+def retrieve_through_letter(letter_content: str, user_id: int, character_id: int):
      ## 2-1. 수신 메일에 대한 질의 작성
-    questions = generate_questions(letter)
+    questions = generate_questions(letter_content)
 
     ## 2-2. 질의 내용을 RAG를 통해서 관련 메일 추출
-    related_letters = retrieve_letter(questions)
+    related_letters = retrieve_letter(questions, user_id, character_id)
     
     return related_letters
 
@@ -152,18 +152,21 @@ def write_letter(letter):
     
 def write_letter_character(letter_send: Letter):
     
-    letter = letter_send.letter_content
+    # Extract the letter content, user_id, character_id
+    letter_content = letter_send.letter_content
+    user_id = letter_send.user_id
+    character_id = letter_send.character_id
     
     # character_id를 통해서 character 찾는다
     character = get_character_by_id(letter_send.character_id)
     
     character_name = character.character_name
     
-    related_letters = retrieve_through_letter(letter)
+    related_letters = retrieve_through_letter(letter_content, user_id, character_id)
     
     related_letters_str = [document_to_string(related_letter) for related_letter in related_letters]
     
-    refined_retrieved_info = refining_retrieved_info(related_letters_str, letter)
+    refined_retrieved_info = refining_retrieved_info(related_letters_str, letter_content)
     
     
     
@@ -203,7 +206,7 @@ def write_letter_character(letter_send: Letter):
     # 4. Write Mail
     try:
         
-        response = chain.invoke(letter)
+        response = chain.invoke(letter_content)
 
         # 응답한 메일을 초기화
         letter_receiving = Letter()
@@ -220,11 +223,11 @@ def write_letter_character(letter_send: Letter):
         pass
     
 
-def refining_retrieved_info(retrieved_info: str, letter: str):
+def refining_retrieved_info(retrieved_info: str, letter_content: str):
     
     promt_text = f"""
         # Original Letter:
-        {letter}
+        {letter_content}
         
         
         # Retrieved_info:
@@ -248,7 +251,7 @@ def refining_retrieved_info(retrieved_info: str, letter: str):
     
     ## 3. Chain
     chain = (
-        { "letter": RunnablePassthrough()}
+        { "letter_content": RunnablePassthrough()}
         | prompt
         | llm
         | StrOutputParser()
@@ -256,7 +259,7 @@ def refining_retrieved_info(retrieved_info: str, letter: str):
     
     try:
         
-        response = chain.invoke(letter)
+        response = chain.invoke(letter_content)
         
         
         print("\n\n\n\nTHIS IS REFINED RETRIEVED INFO \n\n")
