@@ -20,7 +20,7 @@ def writeLetter(letter: LetterDto):
     return letter_received
 
 # 보낸편지 받은편지 전체 조회
-@router.get("/leadLetter", response_model=List[LetterDto])
-def leadLetter(db: Session = Depends(get_db)):
+@router.get("/readLetter", response_model=List[LetterDto])
+def readLetter(db: Session = Depends(get_db)):
     letters = db.query(Letter).all()
     return letters
