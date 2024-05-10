@@ -17,11 +17,6 @@ def write_letter(letter: LetterDto):
     letter_sending.letter_content =  letter.letter_content
     letter_sending.created_time = datetime.now()
     
-    # letter_sent.set_sender_name(letter.sender_name)
-    # letter_sent.set_content(letter.content)
-    # letter_sent.set_receiver_name(letter.receiver_name)
-    # letter_sent.set_created_date(datetime.now())
-    
     letter_received = write_letter_character(letter_sending)
     
     save_letter(letter_sending)
@@ -34,9 +29,9 @@ def write_letter(letter: LetterDto):
 def save_letter(letter: Letter):
     try:
         with SessionLocal() as session:
+            embed_letter(letter)
             session.add(letter)
             session.commit()
-            embed_letter(letter)
             return "Letter saved successfully."
     except Exception as e:
         # The session is automatically rolled back by the context manager.
