@@ -1,6 +1,6 @@
 
 from services.characters.create_character import create_character_by_character_name
-from repository.character import get_character_by_name
+from query.character import get_character_by_name
 
 def character_setup_by_names(characters_names):
     """

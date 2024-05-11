@@ -1,4 +1,4 @@
-from repository.character import Character, get_all_characters_for_main
+from query.character import Character, get_all_characters_for_main
 from schemas.schemas import CharacterDto
 from models.database import SessionLocal
 import json

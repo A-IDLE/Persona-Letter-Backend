@@ -1,5 +1,5 @@
 from models.models import User
-from models.models import SessionLocal
+from models.database import SessionLocal
     
 def create_user(user: User):
     try:
