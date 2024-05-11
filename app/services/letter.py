@@ -7,7 +7,7 @@ from utils.utils import document_to_string, load_prompt
 from services.prompt import load_character_prompt
 from datetime import datetime
 from models.models import Letter
-from repository.character import get_character_by_id
+from query.character import get_character_by_id
         
 
 def generate_questions(letter):

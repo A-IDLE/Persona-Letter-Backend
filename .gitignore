@@ -9,3 +9,5 @@ app/database/vectorDB/DB_INDEX.pkl
 __pycache__/
 
 *.pyc
+
+serviceAccountKey.json

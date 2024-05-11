@@ -2,7 +2,7 @@ from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from services.model import load_make_character_model
-from repository.character import get_character_by_name
+from query.character import get_character_by_name
 
 
 ###### PROMPT LOADER

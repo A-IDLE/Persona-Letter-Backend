@@ -5,7 +5,7 @@ from services.prompt import load_prompt
 from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
-from repository.character import create_character
+from query.character import create_character
 
 
 def parse_character_description(description, character_name):

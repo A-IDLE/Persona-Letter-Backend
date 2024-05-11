@@ -1,6 +1,6 @@
 from models.database import SessionLocal
-from repository.letter import Letter
-from repository.character import Character  
+from query.letter import Letter
+from query.character import Character  
 
 def get_user_inbox(user_id: int):
     try:
