@@ -102,6 +102,8 @@ def get_user_data(user_info = Depends(google_login_pretreatment)):
     }
     
     print(user_id)
+
+    print(user_info)
     
     return user_id
 
@@ -110,6 +112,6 @@ def get_user_data(user_info = Depends(google_login_pretreatment)):
 def test(request: Request):
     user_info = request.state.user
     email = user_info.get("email")
-    print(email)
+    print(user_info)
     return {"email": email}
     
