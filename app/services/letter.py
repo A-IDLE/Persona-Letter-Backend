@@ -1,7 +1,8 @@
+import json
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.prompts import PromptTemplate
-from services.retriever import load_faiss_retriever, load_tuned_faiss_retriever
+from services.retriever import load_faiss_retriever, load_tuned_faiss_retriever, get_pinecone_retriever
 from services.model import load_model
 from utils.utils import document_to_string, load_prompt
 from services.prompt import load_character_prompt
@@ -31,8 +32,9 @@ def generate_questions(letter):
         Returns the found contents as a Python list.
         #question:
         {question}
-            
-            """
+        #example answer format:
+        ["found content1", "found content2", "found content3", "found content4", "found content5"]
+        """
             
             
     # prompt_text = """
@@ -73,15 +75,18 @@ def generate_questions(letter):
     return response
 
 
-def retrieve_letter(questions:str, user_id:int, character_id:int):
-    retriever = load_tuned_faiss_retriever(user_id, character_id)
-    letters = retriever.invoke(questions)
+def retrieve_letter(questions:[str], user_id:int, character_id:int):
+    # retriever = load_tuned_faiss_retriever(user_id, character_id)
+    # letters = retriever.invoke(questions)
     
+    letters = get_pinecone_retriever(user_id, character_id, questions)   # 검색 및 검색 결과 반환
+
     print("\n\n\n\nTHIS IS RETRIEVED LETTERS \n"+"****"*10)
     for letter in letters:
         
         print("\n\n")
-        print(letter.page_content)
+        # print(letter.page_content)    #기존 코드
+        print(letter)
         print("\n\n")
         
     print("RETRIEVAL DONE \n\n\n\n"+"****"*10)
@@ -93,6 +98,12 @@ def retrieve_letter(questions:str, user_id:int, character_id:int):
 def retrieve_through_letter(letter_content: str, user_id: int, character_id: int):
      ## 2-1. 수신 메일에 대한 질의 작성
     questions = generate_questions(letter_content)
+
+    questions = json.loads(questions)
+
+    print("\n\n\n\nTHIS IS QUESTIONS \n\n")
+    print(f"questions type : {type(questions)}")
+    print(questions)
 
     ## 2-2. 질의 내용을 RAG를 통해서 관련 메일 추출
     related_letters = retrieve_letter(questions, user_id, character_id)

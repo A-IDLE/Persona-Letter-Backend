@@ -8,6 +8,8 @@ from langchain.storage import LocalFileStore
 from utils.utils import load_pdf, load_txt, identify_path
 from services.vector_database import load_vector_db
 from models.models import Letter
+from pinecone import Pinecone
+from openai import OpenAI
 import os
 
 
@@ -178,3 +180,76 @@ def embed_letter(letter: Letter):
 
         print("new FAISS database saved.")
             
+
+def embed_letter_pinecone(letter: Letter):
+
+    load_dotenv()   # 환경변수들 불러오기
+    api_key = os.getenv('PINECONE_API_KEY') # pinecone api key
+    index_name = os.getenv('PINECONE_INDEX_NAME')  # db index 이름
+    embedding_model = os.getenv('EMBEDDING_MODEL') #  embedding 모델
+
+    pc = Pinecone(api_key=api_key)  # configure client
+    # connect to index
+    index = pc.Index(index_name)
+    
+    splitter = RecursiveCharacterTextSplitter(chunk_size=50, chunk_overlap=10)
+    
+    docs =[]
+    doc = Document(
+        page_content=letter.letter_content,
+        metadata={
+            "letter_id":letter.letter_id,
+            "character_id":letter.character_id,
+            "user_id":letter.user_id,
+            "reception_status":letter.reception_status,
+            "created_time":letter.created_time,
+        }
+    )
+    
+    docs.append(doc)
+
+    print(doc)
+    
+    
+    split_docs = splitter.split_documents(docs) if docs else [] # 업로드된 파일 쪼개기
+    print(f"\n\nSPLIT DOCS 총 문서수 : {len(split_docs)}\n\n")
+
+    # Convert split documents to vectors
+    vector_data = []
+    for idx, doc_chunk in split_docs:
+        vector = text_to_vector(doc_chunk.page_content, idx)  # Convert text content to vector
+        metadata = {
+            "letter_id": doc_chunk.metadata.get('letter_id'),
+            "character_id": doc_chunk.metadata.get('character_id'),
+            "user_id": doc_chunk.metadata.get('user_id'),     
+            "reception_status": doc_chunk.metadata.get('reception_status'),     
+            "created_time": doc_chunk.metadata.get('created_time')     
+        }
+        vector_entry = {
+            "id": f"{doc_chunk.metadata['letter_id']}_{idx}",  # Creating a composite ID
+            "values": vector,
+            "metadata": metadata,
+            "namespace" : f"{doc_chunk.metadata['user_id']}_{doc_chunk.metadata['character_id']}"
+        }
+        vector_data.append(vector_entry)
+
+    print("EMBEDDING LETTER++++++++++++++++++++++++++++++")
+
+    # vector db 가 있는 경우
+    if index.describe_index_stats():
+        index.upsert(vectors=vector_data)   # Upsert the vector data into the index
+        print("pinecone database updated and saved.")
+    else:
+        print("pinecone database not found.")
+
+# Example function to convert text to vector (this needs to be defined based on your environment/tools)
+def text_to_vector(text, idx):
+    client = OpenAI()
+
+    embedding_object = client.embeddings.create(
+    model= os.getenv('EMBEDDING_MODEL'), # text-embedding-3-large
+    input=text,
+    encoding_format="float"
+    )
+    print(f"text_to_vector function {idx} completed.")
+    return embedding_object.data[0].embedding 

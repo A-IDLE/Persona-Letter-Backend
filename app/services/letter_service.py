@@ -1,7 +1,7 @@
 from services.letter import write_letter_character
 from query.letter import Letter
 from query.letter import get_letter_by_id
-from services.embeddings import embed_letter
+from services.embeddings import embed_letter, embed_letter_pinecone
 from datetime import datetime
 from schemas.schemas import LetterDto
 from models.database import SessionLocal
@@ -30,7 +30,8 @@ def write_letter(letter: LetterDto):
 def save_letter(letter: Letter):
     try:
         with SessionLocal() as session:
-            embed_letter(letter)
+            # embed_letter(letter)
+            embed_letter_pinecone(letter)
             session.add(letter)
             session.commit()
             return "Letter saved successfully."

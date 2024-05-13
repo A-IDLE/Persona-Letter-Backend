@@ -29,7 +29,9 @@ excluded_paths = [
     "/googleLogin",
     "/characters",
     "/sendmail",
-    "/"
+    "/",
+    "/docs",
+    "/openapi.json"
 ]
 
 # 인증 미들웨어 추가

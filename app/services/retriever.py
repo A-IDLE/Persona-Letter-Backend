@@ -1,8 +1,14 @@
+from dotenv import load_dotenv
+import openai
 from services.vector_database import load_vector_db, load_cached_db
 from langchain_community.retrievers import BM25Retriever
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.retrievers import EnsembleRetriever
 from utils.utils import load_pdf, load_txt
+from pinecone import Pinecone
+from openai import OpenAI
+import os
+import time
 
 
 def load_faiss_retriever():
@@ -86,3 +92,57 @@ def load_tuned_faiss_retriever(user_id: int, character_id: int):
     })
 
     return faiss_retriever
+
+def get_pinecone_retriever(user_id: int, character_id: int, questions:[str]):
+    """
+    특정 사용자와 캐릭터에 대한 pinecone retriever 결과를 반환합니다.
+    
+    Args:
+        user_id (int): 사용자 id
+        character_id (int): 캐릭터 id
+        questions ([str]): 질문들
+    """
+
+    load_dotenv()   # 환경변수들 불러오기
+    api_key = os.getenv('PINECONE_API_KEY') # pinecone api key
+    index_name = os.getenv('PINECONE_INDEX_NAME')  # db index 이름
+    embedding_model = os.getenv('EMBEDDING_MODEL') #  embedding 모델
+
+    pc = Pinecone(api_key=api_key)
+    index = pc.Index(index_name)
+
+    # get relevant contexts
+    contexts = []
+
+    time_waited = 0
+    client = OpenAI(
+    api_key = os.getenv("OPENAI_API_KEY"),
+    )
+    for question in questions:
+        xq = client.embeddings.create(
+            input=question,
+            model=embedding_model,
+            encoding_format="float"
+        ).data[0].embedding
+
+        while (len(contexts) < 3 and time_waited < 10):
+            res = index.query(
+            namespace=f"{user_id}_{character_id}",
+            vector=xq,
+            top_k=3,
+            include_metadata=True
+            )
+            contexts = contexts + [
+                x['metadata']['text'] for x in res['matches']
+            ]
+            print(f"Retrieved {len(contexts)} contexts, sleeping for 5 seconds...")
+            time.sleep(5)
+            time_waited += 5
+
+        if time_waited >= 10:
+            print("Timed out waiting for contexts to be retrieved.")
+            contexts = ["No contexts retrieved. Try to answer the question yourself!"]
+
+    print(f"contexts: {contexts}")
+
+    return contexts
