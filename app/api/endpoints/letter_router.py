@@ -7,18 +7,28 @@ from models.models import Letter
 from sqlalchemy.orm import Session
 from models.database import get_db
 from typing import List
+from fastapi import Request
+from services.mail.smtp import send_email
 
 
 router = APIRouter()
 
 @router.post("/writeLetter")
 def writeLetter(request: Request, letter: LetterDto):
+
     user_info = request.state.user
     userId = user_info.get("userId")
     print(userId)
+
     
     letter_sent = letter
     letter_received = write_letter(letter_sent)
+    
+    # userEmail을 추출
+    user_info = request.state.user
+    email = user_info.get("email")
+    
+    send_email(email)
     
     return letter_received
 
