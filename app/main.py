@@ -16,6 +16,7 @@ from services.others.setup import character_setup_by_names
 from services.vector_database import init_vectorDB
 from fastapi.middleware.cors import CORSMiddleware
 from auth.auth import AuthMiddleware
+from services.mail.mail import router as router_mail
 
 # 맥 오류 해결 Error #15: Initializing libiomp5.dylib, but found libiomp5.dylib already initialized
 import os
@@ -26,6 +27,8 @@ fastapi_app = FastAPI()
 # 인증토큰 검증을 하지 않을 경로 설정
 excluded_paths = [
     "/googleLogin",
+    "/characters",
+    "/sendmail",
     "/"
 ]
 
@@ -51,6 +54,7 @@ fastapi_app.include_router(router3)
 fastapi_app.include_router(router_character)
 fastapi_app.include_router(router_inbox)
 fastapi_app.include_router(router_auth)
+fastapi_app.include_router(router_mail)
 
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)

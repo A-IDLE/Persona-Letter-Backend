@@ -91,27 +91,21 @@ def get_user_data(user_info = Depends(google_login_pretreatment)):
     ## Extract email from the user_info
     email = user_info.get("email")
     
-    print(email)
-    
     ## Perform google login with the email
     user = google_login(email)
     
-    ## Send back the userId to the client
-    user_id = {
+    # 유저 아이디를 응답으로 보낸다.
+    response = {
         "userId":user.user_id
     }
     
-    print(user_id)
-
-    print(user_info)
     
-    return user_id
+    return response
 
 
 @router.get("/test")
 def test(request: Request):
     user_info = request.state.user
     email = user_info.get("email")
-    print(user_info)
+    print(email)
     return {"email": email}
-    
