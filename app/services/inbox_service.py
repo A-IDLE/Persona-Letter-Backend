@@ -2,7 +2,7 @@ from models.database import SessionLocal
 from query.letter import Letter
 from query.character import Character  
 
-def get_user_inbox(user_id: int):
+def get_user_inbox(user_id: int, character_id: int):
     try:
         with SessionLocal() as session:  
             # Letter 테이블과 Character 테이블을 조인하고 필요한 정보를 선택합니다.
@@ -12,6 +12,7 @@ def get_user_inbox(user_id: int):
                 Character, Letter.character_id == Character.character_id
             ).filter(
                 Letter.user_id == user_id, 
+                Letter.character_id == character_id,  # 클릭한 캐릭터 아이디와 일치하는 메일만 가져옵니다.
                 Letter.reception_status == "receiving"
             ).all()
 
@@ -31,12 +32,13 @@ def get_user_inbox(user_id: int):
 
             return result
     except Exception as e:
-        print(e)  # 오류가 발생하면 오류 메시지를 출력합니다.
+        print("삐빅에러",e)  # 오류가 발생하면 오류 메시지를 출력합니다.
         return None
 
-def get_user_outbox(user_id: int):
+
+def get_user_outbox(user_id: int, character_id: int):
     try:
-        with SessionLocal() as session:  
+         with SessionLocal() as session:  
             # Letter 테이블과 Character 테이블을 조인하고 필요한 정보를 선택합니다.
             outbox_letters_with_characters = session.query(
                 Letter, Character.character_name
@@ -44,6 +46,7 @@ def get_user_outbox(user_id: int):
                 Character, Letter.character_id == Character.character_id
             ).filter(
                 Letter.user_id == user_id, 
+                Letter.character_id == character_id,  # 클릭한 캐릭터 아이디와 일치하는 메일만 가져옵니다.
                 Letter.reception_status == "sending"
             ).all()
 
