@@ -29,7 +29,7 @@ excluded_paths = [
     "/googleLogin",
     "/characters",
     "/sendmail",
-    "/confirmAccessToken",
+    "/validateToken",
     "/"
 ]
 

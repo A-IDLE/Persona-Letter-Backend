@@ -114,7 +114,7 @@ def test(request: Request):
     return {"email": email}
 
 
-@router.post("/confirmAccessToken")
+@router.post("/validateToken")
 def confirm_accessToken(token_data: TokenData):
     try:
         ## Extract the token from the request body
