@@ -74,9 +74,13 @@ async def google_login_pretreatment(token_data: TokenData):
     try:
         ## Extract the token from the request body
         accessToken = token_data.accessToken
-
+        
+        print("accessToken FINE")
+        print(accessToken)
         # Verify the token
         user_info = auth.verify_id_token(accessToken)
+        
+        print("user_info FINE")
         
         return user_info
     except auth.InvalidIdTokenError:
