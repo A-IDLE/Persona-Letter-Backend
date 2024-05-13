@@ -16,7 +16,7 @@ from services.others.setup import character_setup_by_names
 from services.vector_database import init_vectorDB
 from fastapi.middleware.cors import CORSMiddleware
 from auth.auth import AuthMiddleware
-from services.mail.mail import router as router_mail
+from services.mail.smtp import router as router_mail
 
 # 맥 오류 해결 Error #15: Initializing libiomp5.dylib, but found libiomp5.dylib already initialized
 import os
@@ -29,6 +29,7 @@ excluded_paths = [
     "/googleLogin",
     "/characters",
     "/sendmail",
+    "/confirmAccessToken",
     "/"
 ]
 
