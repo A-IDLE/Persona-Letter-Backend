@@ -11,5 +11,4 @@ __pycache__/
 *.pyc
 
 serviceAccountKey.json
-
 googleOauthKey.json
