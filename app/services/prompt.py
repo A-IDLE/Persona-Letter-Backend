@@ -51,7 +51,7 @@ def get_character_info(character):
     return result
 
 
-def load_character_prompt(character_name):
+def load_character_prompt(character_name, letter_content):
     
     character = get_character_by_name(character_name)
     
@@ -67,10 +67,10 @@ def load_character_prompt(character_name):
         'possessions': character.possessions,
         'etymology': character .etymology,
         'examples_tone_of_voice':  character.examples_tone_of_voice,
-        'letter':  "{letter}",
+        'letter':  letter_content,
     }
     
-    base_prompt = load_prompt("form")
+    base_prompt = load_prompt("hermione_markdown_0.2.1")
     
     final_prompt = base_prompt.format(**prompt_inputs)
     
