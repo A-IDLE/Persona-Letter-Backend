@@ -99,6 +99,7 @@ def get_user_data(user_info = Depends(google_login_pretreatment)):
         "userId":user.user_id
     }
     
+    
     return response
 
 
