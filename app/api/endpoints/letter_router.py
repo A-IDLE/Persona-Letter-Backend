@@ -33,15 +33,16 @@ def writeLetter(request: Request, letter: LetterDto):
     return letter_received
 
 # 보낸편지 받은편지 전체 조회
-@router.get("/readLetter", response_model=List[LetterDto])
+@router.get("/readLetter")
 def readLetter(db: Session = Depends(get_db)):
     letters = db.query(Letter).all()
     return letters
 
-@router.get("/readLetter/{user_id}/{character_id}", response_model=List[LetterDto])
+@router.get("/readLetter/{user_id}/{character_id}")
 def read_letter(user_id: int, character_id: int, db: Session = Depends(get_db)):
     # 해당 사용자 ID와 캐릭터 ID에 해당하는 편지들을 데이터베이스에서 가져옴
     letters = db.query(Letter).filter(Letter.user_id == user_id, Letter.character_id == character_id).all()
+    print(letters)
     return letters
 
 
