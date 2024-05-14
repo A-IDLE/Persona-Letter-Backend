@@ -1,3 +1,4 @@
+import asyncio
 from services.letter import write_letter_character
 from query.letter import Letter
 from query.letter import get_letter_by_id
@@ -31,9 +32,10 @@ def save_letter(letter: Letter):
     try:
         with SessionLocal() as session:
             # embed_letter(letter)
-            embed_letter_pinecone(letter)
             session.add(letter)
             session.commit()
+            print(f"letter.letter_id : {letter.letter_id}")
+            embed_letter_pinecone(letter)
             return "Letter saved successfully."
     except Exception as e:
         # The session is automatically rolled back by the context manager.

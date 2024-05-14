@@ -1,3 +1,4 @@
+import asyncio
 import json
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
@@ -79,7 +80,8 @@ def retrieve_letter(questions:[str], user_id:int, character_id:int):
     # retriever = load_tuned_faiss_retriever(user_id, character_id)
     # letters = retriever.invoke(questions)
     
-    letters = get_pinecone_retriever(user_id, character_id, questions)   # 검색 및 검색 결과 반환
+    letters = asyncio.run(get_pinecone_retriever(user_id, character_id, questions))   # 검색 및 검색 결과 반환
+    
 
     print("\n\n\n\nTHIS IS RETRIEVED LETTERS \n"+"****"*10)
     for letter in letters:
@@ -114,7 +116,8 @@ def write_letter(letter):
     # 1. Embed the received Letter
     
     related_letters = retrieve_through_letter(letter)
-    related_letters_str = [document_to_string(related_letter) for related_letter in related_letters]
+    # related_letters_str = [document_to_string(related_letter) for related_letter in related_letters]
+    related_letters_str = [f"Document content: {related_letter}" for related_letter in related_letters]
     
     added_prompt =(
         f"""
@@ -175,7 +178,8 @@ def write_letter_character(letter_send: Letter):
     
     related_letters = retrieve_through_letter(letter_content, user_id, character_id)
     
-    related_letters_str = [document_to_string(related_letter) for related_letter in related_letters]
+    # related_letters_str = [document_to_string(related_letter) for related_letter in related_letters]
+    related_letters_str = [f"Document content: {related_letter}" for related_letter in related_letters]
     
     refined_retrieved_info = refining_retrieved_info(related_letters_str, letter_content)
     
