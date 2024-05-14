@@ -4,7 +4,7 @@ from schemas.schemas import LetterDto
 
 router = APIRouter()
 
-@router.get("/getALetter/{letter_id}", response_model=LetterDto)
+@router.get("/getALetter/{letter_id}")
 def getAletter(letter_id: int):
     letter = get_a_letter(letter_id)
     if not letter:
