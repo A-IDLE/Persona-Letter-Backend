@@ -5,6 +5,7 @@ class LetterDto(BaseModel):
     character_id: int
     user_id: int
     letter_content: str
+    read_status : bool
     reception_status : str | None = None
     created_date: datetime | None = None
 
