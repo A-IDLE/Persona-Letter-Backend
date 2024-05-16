@@ -166,6 +166,8 @@ def write_letter_character(letter_send: Letter):
     refined_retrieved_info = refining_retrieved_info(
         related_letters_str, letter_content)
 
+    language_prompt = verfiy_language(letter_content)
+
     added_prompt = (
         f"""\n\n## REFERENCE INFO\n{refined_retrieved_info}"""
     )
@@ -173,7 +175,7 @@ def write_letter_character(letter_send: Letter):
     # 1. Prompt
     character_prompt = load_character_prompt(character_name, letter_content)
 
-    final_prompt = character_prompt + added_prompt
+    final_prompt = character_prompt + added_prompt + language_prompt
 
     prompt = PromptTemplate.from_template(final_prompt)
 
@@ -287,9 +289,57 @@ def get_a_letter(letter_id: int, db: Session):
 
 def get_letters_by_reception_status(user_id: int, character_id: int, reception_status: str):
 
-    letters = query_get_letters_by_reception_status(user_id, character_id, reception_status)
+    letters = query_get_letters_by_reception_status(
+        user_id, character_id, reception_status)
 
     if not letters:
         raise HTTPException(status_code=404, detail="No letters found")
-    
+
     return letters
+
+
+def verfiy_language(letter_content: str):
+    promt_text = f"""
+        # Original Letter:
+        {letter_content}
+        
+        
+       What is the language of the Original Letter?
+        
+        answer only in format below:
+        
+        #Format 
+       English
+    
+    """
+
+    prompt = PromptTemplate.from_template(promt_text)
+
+    # 2. LLM
+    llm = load_model()
+
+    # 3. Chain
+    chain = (
+        {"letter_content": RunnablePassthrough()}
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
+
+    try:
+        response = chain.invoke(letter_content)
+
+        prompt = (
+            f"""\n\nWRITE ONLY IN {response}"""
+        )
+
+        print("\n\n\n\nTHE LANGUAGE \n\n")
+        print(response)
+        print("-----"*10)
+        print("\n\n\n\n")
+
+        return prompt
+
+    except Exception as e:
+        ("An error occurred: " + str(e))
+        pass
