@@ -2,6 +2,8 @@ import os
 import logging
 from langchain_community.document_loaders import PyPDFLoader 
 from langchain_community.document_loaders import TextLoader
+from fastapi import Request
+from query.user import get_user_by_email
 
 
 ###### LOADER
@@ -85,4 +87,16 @@ def document_to_string(doc):
 
 
 
+def get_user_id_from_request(request:Request):
+    # Request 객체에서 user_id를 추출합니다.
+    email = request.state.user.get("email")
+    user = get_user_by_email(email)
+    user_id = user.user_id
     
+    return user_id
+
+def get_email_from_request(request:Request):
+    # Request 객체에서 email 추출합니다.
+    email = request.state.user.get("email")
+    
+    return email

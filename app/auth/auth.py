@@ -89,7 +89,7 @@ async def google_login_pretreatment(token_data: TokenData):
         raise HTTPException(status_code=500, detail=str(e))
     
     
-@router.post("/googleLogin")
+@router.post("/login/google")
 def get_user_data(user_info = Depends(google_login_pretreatment)):
     
     ## Extract email from the user_info
