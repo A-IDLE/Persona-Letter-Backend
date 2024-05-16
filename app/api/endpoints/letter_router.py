@@ -59,6 +59,18 @@ def get_letters(character_id: int, request: Request, db: Session = Depends(get_d
     print(letters)
     return letters
 
+# 받은편지 읽음처리
+@router.put("/letterStatus/{letter_id}")
+def update_letter_status(letter_id: int, db: Session = Depends(get_db)):
+    letter = db.query(Letter).filter(Letter.letter_id == letter_id).first()  # letter_id로 수정
+    if not letter:
+        raise HTTPException(status_code=404, detail="Letter not found")
+
+    letter.read_status = True  # Boolean 타입으로 수정
+    db.commit()
+    db.refresh(letter)
+    return letter
+
 
 @router.get("/letters/{letter_id}")
 def get_letter(letter_id: int, request: Request, db: Session = Depends(get_db)):
