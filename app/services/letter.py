@@ -1,4 +1,3 @@
-import asyncio
 import json
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
@@ -72,7 +71,7 @@ def generate_questions(letter):
         | StrOutputParser()
     )
     
-    response = llm_chain.with_config(configuarble={"llm":"gpt-4-turbo-preview"}).invoke(letter)
+    response = llm_chain.with_config(configuarble={"llm":"gpt-4o"}).invoke(letter)
     return response
 
 
@@ -80,7 +79,7 @@ def retrieve_letter(questions:[str], user_id:int, character_id:int):
     # retriever = load_tuned_faiss_retriever(user_id, character_id)
     # letters = retriever.invoke(questions)
     
-    letters = asyncio.run(get_pinecone_retriever(user_id, character_id, questions))   # 검색 및 검색 결과 반환
+    letters = get_pinecone_retriever(user_id, character_id, questions)   # 검색 및 검색 결과 반환
     
 
     print("\n\n\n\nTHIS IS RETRIEVED LETTERS \n"+"****"*10)

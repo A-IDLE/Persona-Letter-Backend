@@ -1,4 +1,3 @@
-import asyncio
 from services.letter import write_letter_character
 from query.letter import Letter
 from query.letter import get_letter_by_id

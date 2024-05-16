@@ -5,7 +5,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.embeddings import CacheBackedEmbeddings
 from langchain_core.documents.base import Document
 from langchain.storage import LocalFileStore
-from .retriever import AsyncPineconeClient
+from .retriever import PineconeClient
 from utils.utils import load_pdf, load_txt, identify_path
 from services.vector_database import load_vector_db
 from models.models import Letter
@@ -308,11 +308,11 @@ def embed_letter_pinecone(letter: Letter):
 
     print(f"Vector data: {len(vector_data)}")
 
-    pinecone_client = AsyncPineconeClient(api_key=api_key,index_host=index_host)
+    pinecone_client = PineconeClient(api_key=api_key,index_host=index_host)
 
-    response = pinecone_client.upsert(index_name="index_name", vectors=vector_data)
+    response = pinecone_client.upsert(index_name=index_name, vectors=vector_data)
 
-    # Asynchronously upsert vector data into the Pinecone index
+    # upsert vector data into the Pinecone index
     # index.upsert(vectors=vector_data)  # Upsert the vector data into the index
     print("\n\nPinecone database updated and saved.\n\n")
     print("\n\nPinecone response: ", response, "\n\n")
