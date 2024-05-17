@@ -1,6 +1,8 @@
+import json
 from dotenv import load_dotenv
 import openai
-from services.vector_database import load_vector_db, load_cached_db
+from services.embeddings import text_to_vector
+from services.vector_database import load_vector_db, load_cached_db, pinecone_init
 from langchain_community.retrievers import BM25Retriever
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.retrievers import EnsembleRetriever
@@ -92,115 +94,6 @@ def load_tuned_faiss_retriever(user_id: int, character_id: int):
 
     return faiss_retriever
 
-# def get_pinecone_retriever(user_id: int, character_id: int, questions:[str]):
-#     """
-#     특정 사용자와 캐릭터에 대한 pinecone retriever 결과를 반환합니다.
-    
-#     Args:
-#         user_id (int): 사용자 id
-#         character_id (int): 캐릭터 id
-#         questions ([str]): 질문들
-#     """
-
-#     load_dotenv()   # 환경변수들 불러오기
-#     api_key = os.getenv('PINECONE_API_KEY') # pinecone api key
-#     index_name = os.getenv('PINECONE_INDEX_NAME')  # db index 이름
-#     embedding_model = os.getenv('EMBEDDING_MODEL') #  embedding 모델
-
-#     pc = Pinecone(api_key=api_key)
-#     index = pc.Index(index_name)
-
-#     # get relevant contexts
-#     contexts = []
-
-#     time_waited = 0
-#     client = OpenAI(
-#     api_key = os.getenv("OPENAI_API_KEY"),
-#     )
-#     for question in questions:
-#         xq = client.embeddings.create(
-#             input=question,
-#             model=embedding_model,
-#             encoding_format="float"
-#         ).data[0].embedding
-
-#         while (len(contexts) < 3 and time_waited < 10):
-#             res = index.query(
-#             namespace=f"{user_id}_{character_id}",
-#             vector=xq,
-#             top_k=3,
-#             include_metadata=True
-#             )
-#             contexts = contexts + [
-#                 x['metadata']['text'] for x in res['matches']
-#             ]
-#             print(f"Retrieved {len(contexts)} contexts, sleeping for 5 seconds...")
-#             time.sleep(5)
-#             time_waited += 5
-
-#         if time_waited >= 10:
-#             print("Timed out waiting for contexts to be retrieved.")
-#             contexts = ["No contexts retrieved. Try to answer the question yourself!"]
-
-#     print(f"contexts: {contexts}")
-
-#     return contexts
-
-import os
-import requests
-from dotenv import load_dotenv
-
-class PineconeClient:
-    def __init__(self, api_key, index_host):
-        self.api_key = api_key
-        self.index_host = index_host
-
-    def query(self, index_name, namespace, vector, top_k=3, include_metadata=True):
-        headers = {
-            "Api-Key": self.api_key,
-            "Content-Type": "application/json"
-        }
-        payload = {
-            "vector": vector,
-            "top_k": top_k,
-            "include_metadata": include_metadata,
-            "namespace": namespace
-        }
-        response = requests.post(f"{self.index_host}/query", headers=headers, json=payload)
-        response_data = response.json()
-        return response_data
-
-    def upsert(self, index_name, vectors):
-        headers = {
-            "Api-Key": self.api_key,
-            "Content-Type": "application/json"
-        }
-        payload = {
-            "vectors": vectors
-        }
-        response = requests.post(f"{self.index_host}/vectors/upsert", headers=headers, json=payload)
-        response_data = response.json()
-        return response_data
-
-class OpenAIClient:
-    def __init__(self, api_key):
-        self.api_key = api_key
-        self.endpoint = "https://api.openai.com/v1/embeddings"
-
-    def create_embedding(self, input_text, model):
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
-        }
-        payload = {
-            "input": input_text,
-            "model": model,
-            "encoding_format": "float"
-        }
-        response = requests.post(self.endpoint, headers=headers, json=payload)
-        response_data = response.json()
-        return response_data
-
 def get_pinecone_retriever(user_id: int, character_id: int, questions: [str]):
     """
     Retrieve relevant contexts for specific user and character based on given questions.
@@ -213,68 +106,52 @@ def get_pinecone_retriever(user_id: int, character_id: int, questions: [str]):
     Returns:
         list: List of relevant contexts
     """
-    load_dotenv()  # Load environment variables
-
-    api_key = os.getenv('PINECONE_API_KEY')
-    index_name = os.getenv('PINECONE_INDEX_NAME')
-    embedding_model = os.getenv('EMBEDDING_MODEL')
-    openai_api_key = os.getenv('OPENAI_API_KEY')
-    index_host = os.getenv('PINECONE_INDEX_HOST')
-
-    if not all([api_key, index_name, embedding_model, openai_api_key]):
-        raise ValueError("Missing environment variables. Ensure PINECONE_API_KEY, PINECONE_INDEX_NAME, EMBEDDING_MODEL, and OPENAI_API_KEY are set.")
-
-    pinecone_client = PineconeClient(api_key=api_key, index_host=index_host)
-    openai_client = OpenAIClient(api_key=openai_api_key)
-
     contexts = []
 
-    print(f"Retrieving contexts for user {user_id} and character {character_id}...")
-
     for question in questions:
-        embedding_response = openai_client.create_embedding(question, embedding_model)
+        embedding_response = text_to_vector(question)
         if not embedding_response.get('data'):
             raise ValueError("Failed to generate embedding for the question.")
         
         question_embedding = embedding_response['data'][0]['embedding']
-        retrieved_contexts = fetch_relevant_contexts(pinecone_client, index_name, user_id, character_id, question_embedding)
+        retrieved_contexts = fetch_relevant_contexts(user_id, character_id, question_embedding)
         contexts.extend(retrieved_contexts)
-
-    print(f"Retrieved contexts: {contexts}")
+        
     return contexts
 
-def fetch_relevant_contexts(pinecone_client, index_name, user_id, character_id, question_embedding, max_contexts=5):
+def fetch_relevant_contexts(user_id, character_id, question_embedding):
     """
     Helper function to fetch relevant contexts with retries.
 
     Args:
-        pinecone_client (PineconeClient): Pinecone client instance
-        index_name (str): Pinecone index name
         user_id (int): User ID
         character_id (int): Character ID
         question_embedding (list): Embedding of the question
-        max_retries (int): Maximum number of retries
-        sleep_interval (int): Sleep interval between retries in seconds
-        max_contexts (int): Maximum number of contexts to retrieve
 
     Returns:
         list: List of retrieved contexts
     """
+
+    index = pinecone_init()
     namespace = f"{user_id}_{character_id}"
     contexts = []
 
     print("Fetching relevant contexts...")
 
-    while len(contexts) < max_contexts:
-        response = pinecone_client.query(index_name, namespace, question_embedding)
-        print(f"Response: {response}")
-
-        contexts.extend([match['metadata']['text'] for match in response['matches']])
-        if len(contexts) >= max_contexts:
-            break
+    # response = index.query(index_name, namespace, question_embedding)
+    response = index.query(
+            namespace=namespace,
+            vector=question_embedding,
+            top_k=1,
+            include_values=True,
+            include_metadata=True
+            )
     
-    if len(contexts) < max_contexts:
-        print("Unable to retrieve sufficient contexts within the retry limit.")
-        return ["No contexts retrieved. Try to answer the question yourself!"]
+    if not response.get('matches'):
+        print("No matches found.")
+        return contexts
+
+    contexts.extend([match['metadata']['text'] for match in response['matches']])
+    print(f"Retrieved {len(contexts)} contexts.")
 
     return contexts

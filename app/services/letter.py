@@ -76,21 +76,21 @@ def generate_questions(letter):
 
 
 def retrieve_letter(questions:[str], user_id:int, character_id:int):
-    # retriever = load_tuned_faiss_retriever(user_id, character_id)
-    # letters = retriever.invoke(questions)
+    # retriever = load_tuned_faiss_retriever(user_id, character_id) 기존 faiss 코드
+    # letters = retriever.invoke(questions) 기존 faiss 코드
     
     letters = get_pinecone_retriever(user_id, character_id, questions)   # 검색 및 검색 결과 반환
     
 
-    print("\n\n\n\nTHIS IS RETRIEVED LETTERS \n"+"****"*10)
+    print("\n\nTHIS IS RETRIEVED LETTERS \n"+"****"*10)
     for letter in letters:
         
-        print("\n\n")
-        # print(letter.page_content)    #기존 코드
+        print("\n")
+        # print(letter.page_content)    #기존 faiss 코드
         print(letter)
-        print("\n\n")
+        print("\n")
         
-    print("RETRIEVAL DONE \n\n\n\n"+"****"*10)
+    print("RETRIEVAL DONE \n\n"+"****"*10)
     
 
     return letters
@@ -103,7 +103,6 @@ def retrieve_through_letter(letter_content: str, user_id: int, character_id: int
     questions = json.loads(questions)
 
     print("\n\n\n\nTHIS IS QUESTIONS \n\n")
-    print(f"questions type : {type(questions)}")
     print(questions)
 
     ## 2-2. 질의 내용을 RAG를 통해서 관련 메일 추출
@@ -181,8 +180,6 @@ def write_letter_character(letter_send: Letter):
     related_letters_str = [f"Document content: {related_letter}" for related_letter in related_letters]
     
     refined_retrieved_info = refining_retrieved_info(related_letters_str, letter_content)
-    
-    
     
     added_prompt =(
         f"""\n\n## REFERENCE INFO\n{refined_retrieved_info}"""
@@ -280,7 +277,6 @@ def refining_retrieved_info(retrieved_info: str, letter_content: str):
         print("\n\n\n\nTHIS IS REFINED RETRIEVED INFO \n\n")
         print(response)
         print("-----"*10)
-        print("check 123")
         print("\n\n\n\n")
 
         return response

@@ -55,8 +55,6 @@ def load_character_prompt(character_name, letter_content):
     
     character = get_character_by_name(character_name)
     
-    print(character)
-    
     prompt_inputs = {
         'character_name': character.character_name,
         'biography': character.biography,
