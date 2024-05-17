@@ -6,8 +6,11 @@ from langchain.embeddings import CacheBackedEmbeddings
 from langchain_core.documents.base import Document
 from langchain.storage import LocalFileStore
 from utils.utils import load_pdf, load_txt, identify_path
-from services.vector_database import load_vector_db
+from services.vector_database import load_vector_db, pinecone_upsert
 from models.models import Letter
+from pinecone import Pinecone
+from openai import OpenAI
+from openai import OpenAIError
 import os
 
 
@@ -178,3 +181,58 @@ def embed_letter(letter: Letter):
 
         print("new FAISS database saved.")
             
+
+def embed_letter_pinecone(letter: Letter):
+    # Initialize the text splitter
+    splitter = RecursiveCharacterTextSplitter(chunk_size=250, chunk_overlap=0, length_function=len, separators=["\n", ". "])
+
+    # Split the document
+    split_texts = splitter.split_text(letter.letter_content)
+    print(f"\n\n embed_letter_pinecone SPLIT DOCS total documents: {len(split_texts)}\n\n")
+
+    # Convert split documents to vectors
+    vector_data = []
+    namespace = f"{letter.user_id}_{letter.character_id}"
+    embeddings = text_to_vector(split_texts)  # Get embeddings for all texts at once
+    print(f"text_to_vector function completed for {len(embeddings['data'])} documents.")
+
+    for idx, (text, vector) in enumerate(zip(split_texts, embeddings['data'])):
+        vector_entry = {
+            "id": f"{letter.letter_id}_{idx}",  # Creating a composite ID
+            "values": vector['embedding'],
+            "metadata": {
+                "letter_id": letter.letter_id,
+                "character_id": letter.character_id,
+                "user_id": letter.user_id,
+                "reception_status": letter.reception_status,
+                "created_time": letter.created_time,
+                "text": text,
+            },
+        }
+        vector_data.append(vector_entry)
+
+    # upsert vector data into the Pinecone index
+    response = pinecone_upsert(vector_data, namespace)
+
+    return response
+
+# Example function to convert text to vector
+def text_to_vector(texts):
+    try:
+        load_dotenv()
+        model = os.getenv('EMBEDDING_MODEL')
+        client = OpenAI()
+        embeddings = client.embeddings.create(
+            model=model,
+            input=texts,
+            encoding_format="float"
+        )
+        embeddings = embeddings.to_dict()
+        print(f"Text to vector function completed for {len(embeddings['data'])} documents.")
+        return embeddings
+    except OpenAIError as e:
+        print(f"An error occurred while generating embeddings: {e}")
+        return None
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None

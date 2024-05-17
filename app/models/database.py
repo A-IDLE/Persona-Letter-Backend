@@ -25,8 +25,6 @@ host = os.getenv('host')
 db_name = os.getenv('db_name')
 
 print(user)
-print(password)
-print(host)
 print(db_name)
 
 

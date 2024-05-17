@@ -21,7 +21,7 @@ def load_model():
     load_dotenv()
     
     llm = ChatOpenAI(
-            model="gpt-4-turbo-preview",
+            model="gpt-4o",
             temperature=0,
             streaming=True,
             max_tokens= 500,   # 모델의 max_token 설정

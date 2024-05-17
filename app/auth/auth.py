@@ -32,10 +32,10 @@ class AuthMiddleware(BaseHTTPMiddleware):
         if not authorization:
             return Response("Authorization header is required", status_code=401)
 
-        print(authorization)
+        # print(authorization)
         token = authorization.split(" ")[1] if len(authorization.split(" ")) == 2 else None
         
-        print(token)
+        # print(token)
         if not token:
             return Response("Bearer token not found", status_code=401)
 
@@ -125,7 +125,7 @@ def confirm_accessToken(token_data: TokenData):
         accessToken = token_data.accessToken
         
         print("accessToken FINE")
-        print(accessToken)
+        # print(accessToken)
         # Verify the token
         user_info = auth.verify_id_token(accessToken)
         
