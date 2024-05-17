@@ -68,7 +68,8 @@ def load_character_prompt(character_name, letter_content):
         'letter':  letter_content,
     }
     
-    base_prompt = load_prompt("hermione_markdown_0.2.1")
+    # base_prompt = load_prompt("hermione_markdown_0.2.1")
+    base_prompt = load_prompt("form")
     
     final_prompt = base_prompt.format(**prompt_inputs)
     
