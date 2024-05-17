@@ -1,7 +1,6 @@
-from services.letter_service import write_letter
+from services.letter_service import create_letter
 from schemas.schemas import LetterDto
 from fastapi import FastAPI, APIRouter, Depends, HTTPException, Request
-from services.letter_service import write_letter
 from schemas.schemas import LetterDto
 from models.models import Letter
 from sqlalchemy.orm import Session
@@ -9,8 +8,9 @@ from models.database import get_db
 from typing import List
 from fastapi import Request
 from services.mail.smtp import send_email
-from services.letter import get_letters_by_character_id, get_a_letter, get_letters_by_reception_status
+from query.letter import get_letters_by_reception_status
 from utils.utils import get_user_id_from_request, get_email_from_request
+from query.letter import get_letters_by_character_id, get_a_letter
 
 
 router = APIRouter()
@@ -24,7 +24,7 @@ def writeLetter(request: Request, letter: LetterDto):
     # print(userId)
 
     letter_sent = letter
-    letter_received = write_letter(letter_sent)
+    letter_received = create_letter(letter_sent)
 
     # userEmail을 추출
     user_info = request.state.user
@@ -73,10 +73,10 @@ def update_letter_status(letter_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/letters/{letter_id}")
-def get_letter(letter_id: int, request: Request, db: Session = Depends(get_db)):
+def get_letter(letter_id: int, request: Request):
 
     # letter_id에 해당하는 편지를 데이터베이스에서 가져옴
-    letter = get_a_letter(letter_id, db)
+    letter = get_a_letter(letter_id)
 
     if not letter:
         raise HTTPException(status_code=404, detail="Letter not found")
@@ -106,7 +106,7 @@ def writeLetter(
     letter_sent = letter
     letter_sent.user_id = user_id
 
-    letter_received = write_letter(letter_sent)
+    letter_received = create_letter(letter_sent)
 
     # userEmail을 추출
     email = get_email_from_request(request)
