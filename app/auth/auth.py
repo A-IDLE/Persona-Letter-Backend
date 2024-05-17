@@ -1,13 +1,12 @@
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import auth
-from fastapi import Depends, HTTPException, Security, APIRouter, status, Request
+from fastapi import Depends, HTTPException, Security, APIRouter, status, Request, Query
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from services.auth.auth_service import google_login
+from services.auth.auth_service import google_login, update_user_name_after_login
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 from pydantic import BaseModel
-
 
 
 router = APIRouter()
@@ -69,6 +68,10 @@ def get_current_user(token: HTTPAuthorizationCredentials = Security(security)):
 
 class TokenData(BaseModel):
     accessToken: str
+
+class UpdateUserNameRequest(BaseModel):
+    accessToken: str
+    new_user_name: str
 
 async def google_login_pretreatment(token_data: TokenData):
     try:
@@ -132,4 +135,29 @@ def confirm_accessToken(token_data: TokenData):
     except auth.InvalidIdTokenError:
         raise HTTPException(status_code=401, detail="Invalid ID token")
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/userInfo")
+async def get_user_info(request: Request):
+    try:
+        user_info = request.state.user
+        if not user_info:
+            raise HTTPException(status_code=401, detail="User not authenticated")
+        
+        return {
+            "user_id": user_info.get("uid"),
+            "name": user_info.get("name"),
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.post("/updateUser")
+def update_user(request: UpdateUserNameRequest):
+    try:
+        token_data = TokenData(accessToken=request.accessToken)
+        print(f"Received request to update user with new name {request.new_user_name}")  # 요청 확인 로그
+        result = update_user_name_after_login(token_data, request.new_user_name)
+        return {"message": result}
+    except Exception as e:
+        print(f"Error in update_user endpoint: {str(e)}")  # 에러 로그
         raise HTTPException(status_code=500, detail=str(e))
