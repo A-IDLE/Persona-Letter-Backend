@@ -35,3 +35,20 @@ def delete_user_by_id(user_id: int):
             return "User deleted successfully."
     except Exception as e:
         return f"Error deleting the user: {str(e)}"
+    
+def update_user_name(user_id: int, new_user_name: str):
+    try:
+        print(f"Attempting to update user {user_id} with name {new_user_name}")  # 함수 호출 확인 로그
+        with SessionLocal() as session:
+            user = session.query(User).filter(User.user_id == user_id).first()
+            if user:
+                user.user_name = new_user_name
+                session.commit()
+                print(f"User {user_id} name updated to {new_user_name}")  # 성공 로그
+                return "User name updated successfully."
+            else:
+                print(f"User {user_id} not found")  # 사용자 없음 로그
+                return "User not found."
+    except Exception as e:
+        print(f"Error updating user name: {str(e)}")  # 에러 로그
+        return f"Error updating the user name: {str(e)}"

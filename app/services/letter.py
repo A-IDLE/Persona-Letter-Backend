@@ -1,7 +1,8 @@
+import json
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.prompts import PromptTemplate
-from services.retriever import load_faiss_retriever, load_tuned_faiss_retriever
+from services.retriever import load_faiss_retriever, load_tuned_faiss_retriever, get_pinecone_retriever
 from services.model import load_model
 from utils.utils import document_to_string, load_prompt
 from services.prompt import load_character_prompt
@@ -34,9 +35,9 @@ def generate_questions(letter):
         Returns the found contents as a Python list.
         #question:
         {question}
-            
-            """
-
+        #example answer format:
+        ["found content1", "found content2", "found content3", "found content4", "found content5"]
+        """
     # prompt_text = """
     # #user's letter:
     # {question}
@@ -66,24 +67,28 @@ def generate_questions(letter):
         | llm
         | StrOutputParser()
     )
-
-    response = llm_chain.with_config(
-        configuarble={"llm": "gpt-4-turbo-preview"}).invoke(letter)
+    
+    response = llm_chain.with_config(configuarble={"llm":"gpt-4o"}).invoke(letter)
     return response
 
 
-def retrieve_letter(questions: str, user_id: int, character_id: int):
-    retriever = load_tuned_faiss_retriever(user_id, character_id)
-    letters = retriever.invoke(questions)
+def retrieve_letter(questions:[str], user_id:int, character_id:int):
+    # retriever = load_tuned_faiss_retriever(user_id, character_id) 기존 faiss 코드
+    # letters = retriever.invoke(questions) 기존 faiss 코드
+    
+    letters = get_pinecone_retriever(user_id, character_id, questions)   # 검색 및 검색 결과 반환
+    
 
-    print("\n\n\n\nTHIS IS RETRIEVED LETTERS \n"+"****"*10)
+    print("\n\nTHIS IS RETRIEVED LETTERS \n"+"****"*10)
     for letter in letters:
-
-        print("\n\n")
-        print(letter.page_content)
-        print("\n\n")
-
-    print("RETRIEVAL DONE \n\n\n\n"+"****"*10)
+        
+        print("\n")
+        # print(letter.page_content)    #기존 faiss 코드
+        print(letter)
+        print("\n")
+        
+    print("RETRIEVAL DONE \n\n"+"****"*10)
+    
 
     return letters
 
@@ -92,7 +97,12 @@ def retrieve_through_letter(letter_content: str, user_id: int, character_id: int
     # 2-1. 수신 메일에 대한 질의 작성
     questions = generate_questions(letter_content)
 
-    # 2-2. 질의 내용을 RAG를 통해서 관련 메일 추출
+    questions = json.loads(questions)
+
+    print("\n\n\n\nTHIS IS QUESTIONS \n\n")
+    print(questions)
+
+    ## 2-2. 질의 내용을 RAG를 통해서 관련 메일 추출
     related_letters = retrieve_letter(questions, user_id, character_id)
 
     return related_letters
@@ -102,10 +112,10 @@ def write_letter(letter):
     # 1. Embed the received Letter
 
     related_letters = retrieve_through_letter(letter)
-    related_letters_str = [document_to_string(
-        related_letter) for related_letter in related_letters]
-
-    added_prompt = (
+    # related_letters_str = [document_to_string(related_letter) for related_letter in related_letters]
+    related_letters_str = [f"Document content: {related_letter}" for related_letter in related_letters]
+    
+    added_prompt =(
         f"""
         
         ## Reference
@@ -156,19 +166,15 @@ def write_letter_character(letter_send: Letter):
     character = get_character_by_id(letter_send.character_id)
 
     character_name = character.character_name
-
-    related_letters = retrieve_through_letter(
-        letter_content, user_id, character_id)
-
-    related_letters_str = [document_to_string(
-        related_letter) for related_letter in related_letters]
-
-    refined_retrieved_info = refining_retrieved_info(
-        related_letters_str, letter_content)
-
-    language_prompt = verfiy_language(letter_content)
-
-    added_prompt = (
+    
+    related_letters = retrieve_through_letter(letter_content, user_id, character_id)
+    
+    # related_letters_str = [document_to_string(related_letter) for related_letter in related_letters]
+    related_letters_str = [f"Document content: {related_letter}" for related_letter in related_letters]
+    
+    refined_retrieved_info = refining_retrieved_info(related_letters_str, letter_content)
+    
+    added_prompt =(
         f"""\n\n## REFERENCE INFO\n{refined_retrieved_info}"""
     )
 
@@ -258,7 +264,6 @@ def refining_retrieved_info(retrieved_info: str, letter_content: str):
         print("\n\n\n\nTHIS IS REFINED RETRIEVED INFO \n\n")
         print(response)
         print("-----"*10)
-        print("check 123")
         print("\n\n\n\n")
 
         return response

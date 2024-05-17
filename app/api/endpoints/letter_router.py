@@ -21,7 +21,7 @@ def writeLetter(request: Request, letter: LetterDto):
 
     user_info = request.state.user
     userId = user_info.get("userId")
-    print(userId)
+    # print(userId)
 
     letter_sent = letter
     letter_received = write_letter(letter_sent)
