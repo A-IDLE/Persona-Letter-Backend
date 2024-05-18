@@ -3,7 +3,7 @@ from firebase_admin import credentials
 from firebase_admin import auth
 from fastapi import Depends, HTTPException, Security, APIRouter, status, Request, Query
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from services.auth.auth_service import google_login, update_user_name_after_login
+from services.auth.auth_service import google_login, update_user_name_after_login, get_user_name
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 from pydantic import BaseModel
@@ -160,4 +160,14 @@ def update_user(request: UpdateUserNameRequest):
         return {"message": result}
     except Exception as e:
         print(f"Error in update_user endpoint: {str(e)}")  # 에러 로그
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/getUserName")
+def get_user_name_endpoint(token: HTTPAuthorizationCredentials = Security(security)):
+    try:
+        token_data = TokenData(accessToken=token.credentials)
+        user_name = get_user_name(token_data)
+        return user_name
+    except Exception as e:
+        print(f"Error in get_user_name endpoint: {str(e)}")  # 에러 로그
         raise HTTPException(status_code=500, detail=str(e))

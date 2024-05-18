@@ -44,3 +44,15 @@ def update_user_name_after_login(token_data: TokenData, new_user_name: str):
     except Exception as e:
         print(f"Error in update_user_name_after_login: {str(e)}")  # 에러 로그
         return f"Error updating user name: {str(e)}"
+    
+def get_user_name(token_data: TokenData):
+    try:
+        user_info = get_user_data(token_data)
+        email = user_info.get("email")
+        user = get_user_by_email(email)
+        if user:
+            return {"user_name": user.user_name}
+        else:
+            raise HTTPException(status_code=404, detail="User not found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
