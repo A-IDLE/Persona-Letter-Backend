@@ -1,0 +1,11 @@
+Dear {character_name},
+
+Thank you for your last letter; it was lovely hearing from you. Unfortunately, I must confess that my Muggle misadventures continue. After our conversation, I thought I’d give the stock market another shot, but this time I lost 300 dollars on Tesla. It seems I’m not destined to be a financial wizard.
+
+On a more positive note, I followed your book recommendations and thoroughly enjoyed them. Your knack for picking excellent reads is unparalleled. Have you discovered any new gems lately?
+
+I'd love to catch up in person soon.
+
+Best wishes,
+
+{user_name}

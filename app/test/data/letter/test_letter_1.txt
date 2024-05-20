@@ -1,0 +1,11 @@
+Dear {character_name},
+
+I hope you're doing well. I wanted to share a small Muggle mishap with you. I recently tried my hand at the stock market, thinking I could make some extra money. However, I ended up losing 200 dollars on Tesla. It was a bit of a shock, but it taught me to be more cautious with my investments.
+
+On a brighter note, I've been immersing myself in some new books. Have you read anything interesting lately? I'd love some recommendations.
+
+Let's catch up soon over a cup of tea. It would be great to hear about all the exciting things you've been up to.
+
+Take care,
+
+{user_name}

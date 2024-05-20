@@ -1,0 +1,11 @@
+Dear {character_name},
+
+I hope you're well. Following your advice and a bit of luck, I finally made a positive turn with my Muggle investments. I managed to earn 1000 dollars on Tesla! It feels good to have a win after my previous losses.
+
+Thank you again for your book recommendations. I recently finished the last one you suggested and loved it. Any new recommendations? Your choices never disappoint.
+
+Let's plan to meet up soon. I’d love to share more about my recent adventures and hear about yours.  
+
+Take care,
+
+{user_name}

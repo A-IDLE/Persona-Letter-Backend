@@ -84,9 +84,13 @@ def refining_retrieved_info(retrieved_info: str, letter_content: str):
     
 
 def verfiy_language(letter_content: str):
-    promt_text = f"""
+    
+    print("come to verify language")
+    print(letter_content)
+    
+    promt_text = """
         # Original Letter:
-        {letter_content}
+        {text}
         
         
        What is the language of the Original Letter?
@@ -99,20 +103,29 @@ def verfiy_language(letter_content: str):
     """
 
     prompt = PromptTemplate.from_template(promt_text)
+    
+    print("this is prompt")
+    print(prompt)
+    
 
     # 2. LLM
     llm = load_model()
 
     # 3. Chain
     chain = (
-        {"letter_content": RunnablePassthrough()}
+        {"text": RunnablePassthrough()}
         | prompt
         | llm
         | StrOutputParser()
     )
 
     try:
+        print("come to try")
+        
         response = chain.invoke(letter_content)
+        
+        print("come to response")
+        print(response)
 
         prompt = (
             f"""\n\nWRITE ONLY IN {response}"""
