@@ -16,23 +16,23 @@ from utils.utils import get_user_id_from_request, get_email_from_request
 router = APIRouter()
 
 
-@router.post("/writeLetter")
-def writeLetter(request: Request, letter: LetterDto):
+# @router.post("/writeLetter")
+# def writeLetter(request: Request, letter: LetterDto):
 
-    user_info = request.state.user
-    userId = user_info.get("userId")
-    # print(userId)
+#     user_info = request.state.user
+#     userId = user_info.get("userId")
+#     # print(userId)
 
-    letter_sent = letter
-    letter_received = write_letter(letter_sent)
+#     letter_sent = letter
+#     letter_received = write_letter(letter_sent)
 
-    # userEmail을 추출
-    user_info = request.state.user
-    email = user_info.get("email")
+#     # userEmail을 추출
+#     user_info = request.state.user
+#     email = user_info.get("email")
 
-    send_email(email)
+#     send_email(email)
 
-    return letter_received
+#     return letter_received
 
 # # 보낸편지 받은편지 전체 조회
 # @router.get("/readLetter")
@@ -56,7 +56,6 @@ def get_letters(character_id: int, request: Request, db: Session = Depends(get_d
 
     letters = get_letters_by_character_id(user_id, character_id, db)
 
-    print(letters)
     return letters
 
 # 받은편지 읽음처리
