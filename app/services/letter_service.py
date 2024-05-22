@@ -7,9 +7,10 @@ from services.embeddings import embed_letter_pinecone
 from datetime import datetime
 from schemas.schemas import LetterDto
 from models.database import SessionLocal
+from sqlalchemy.orm import Session
 
 
-def create_letter(letter: LetterDto):
+def create_letter(letter: LetterDto, db: Session):
 
     # pinecone_delete_namespace() # 테스트용 코드
     
@@ -22,10 +23,10 @@ def create_letter(letter: LetterDto):
     letter_sending.letter_content =  letter.letter_content
     letter_sending.created_time = datetime.now()
     
-    letter_received = write_letter(letter_sending)
+    letter_received = write_letter(letter_sending, db)
     
-    save_letter(letter_sending)
-    save_letter(letter_received)
+    save_letter(letter_sending, db)
+    save_letter(letter_received, db)
 
     return letter_received
 
@@ -49,5 +50,5 @@ def create_letter(letter: LetterDto):
 #         return f"Error saving the letter: {str(e)}"
     
 
-def get_a_letter(letter_id: int):
+def get_a_letter(letter_id: int, db: Session):
     return get_a_letter(letter_id)

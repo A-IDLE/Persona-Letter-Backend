@@ -94,6 +94,7 @@ def get_letter(letter_id: int, request: Request):
 def writeLetter(
     request: Request,
     letter: LetterDto,
+    db: Session = Depends(get_db),
     user_id=Depends(get_user_id_from_request)
 ):
 
@@ -104,7 +105,9 @@ def writeLetter(
     letter_sent = letter
     letter_sent.user_id = user_id
 
-    letter_received = create_letter(letter_sent)
+    letter.user_id = user_id
+
+    letter_received = create_letter(letter_sent, db)
 
     # userEmail을 추출
     email = get_email_from_request(request)

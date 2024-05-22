@@ -3,7 +3,7 @@ from firebase_admin import credentials
 from firebase_admin import auth
 from fastapi import Depends, HTTPException, Security, APIRouter, status, Request, Query
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from services.auth.auth_service import google_login, update_user_name_after_login
+from services.auth.auth_service import google_login, update_user_name_after_login, get_user_name, update_user_nickname_after_login
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 from pydantic import BaseModel
@@ -72,6 +72,10 @@ class TokenData(BaseModel):
 class UpdateUserNameRequest(BaseModel):
     accessToken: str
     new_user_name: str
+
+class UpdateUserNicknameRequest(BaseModel):
+    accessToken: str
+    new_user_nickname: str
 
 async def google_login_pretreatment(token_data: TokenData):
     try:
@@ -160,4 +164,25 @@ def update_user(request: UpdateUserNameRequest):
         return {"message": result}
     except Exception as e:
         print(f"Error in update_user endpoint: {str(e)}")  # 에러 로그
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.post("/updateUserNickname")
+def update_user(request: UpdateUserNicknameRequest):
+    try:
+        token_data = TokenData(accessToken=request.accessToken)
+        print(f"Received request to update user with new nickname {request.new_user_nickname}")  # 요청 확인 로그
+        result = update_user_nickname_after_login(token_data, request.new_user_nickname)
+        return {"message": result}
+    except Exception as e:
+        print(f"Error in update_user endpoint: {str(e)}")  # 에러 로그
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/getUserName")
+def get_user_name_endpoint(token: HTTPAuthorizationCredentials = Security(security)):
+    try:
+        token_data = TokenData(accessToken=token.credentials)
+        user_name = get_user_name(token_data)
+        return user_name
+    except Exception as e:
+        print(f"Error in get_user_name endpoint: {str(e)}")  # 에러 로그
         raise HTTPException(status_code=500, detail=str(e))

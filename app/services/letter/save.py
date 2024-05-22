@@ -4,7 +4,7 @@ from services.embeddings import embed_letter_pinecone
 
 
 
-def save_letter(letter: Letter):
+def save_letter(letter: Letter, db: Session):
     try:
         with SessionLocal() as session:
             # embed_letter(letter)

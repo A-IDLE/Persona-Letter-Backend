@@ -42,6 +42,7 @@ class User(Base):
     email = Column(String(100), nullable=False, unique=True)  # Emails should be unique and not nullable
     password = Column(String(100), nullable=True)  # Passwords should not be nullable
     user_name = Column(String(100), nullable=True)  # Changed from Text to String if not expected to exceed typical varchar limits
+    user_nickname = Column(String(100), nullable=True)
     created_time = Column(DateTime(timezone=True), server_default=func.now())  # Use DateTime type and set default as the current time
     updated_time = Column(DateTime(timezone=True), onupdate=func.now())  # Update the timestamp whenever the record is updated
     sso_type = Column(String(100), nullable=True) 

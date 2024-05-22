@@ -2,6 +2,8 @@ from datetime import datetime
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.prompts import PromptTemplate
+from requests import Session
+from query.user import get_user_by_id
 from services.prompt import load_character_prompt
 from models.models import Letter
 from query.character import get_character_by_id
@@ -10,7 +12,7 @@ from .retrieve import retrieve_through_letter
 from .generate import verfiy_language, refining_retrieved_info
 
 
-def write_letter(letter_send: Letter):
+def write_letter(letter_send: Letter, db: Session):
 
     # Extract the letter content, user_id, character_id
     letter_content = letter_send.letter_content
@@ -18,7 +20,7 @@ def write_letter(letter_send: Letter):
     character_id = letter_send.character_id
     
     # 관련된 정보를 retrieval을 통해서 가져온다
-    related_letters = retrieve_through_letter(letter_content, user_id, character_id)
+    related_letters = retrieve_through_letter(letter_content, user_id, character_id, db)
 
     related_letters_str = [f"Document content: {related_letter}" for related_letter in related_letters]
 
@@ -40,9 +42,16 @@ def write_letter(letter_send: Letter):
     character = get_character_by_id(letter_send.character_id)
     # 검색된 character의 이름을 가져온다
     character_name = character.character_name
+
+    # user_id를 통해서 user 정보 찾기
+    user = get_user_by_id(user_id, db)
+    user_name = user.user_name if user else 'User'
+    user_nickname = user.user_nickname if user else 'User'
+    
+    print(f"user_name: {user_name}, user_nickname: {user_nickname}")  # 로그 추가
     
     # 1. Prompt
-    character_prompt = load_character_prompt(character_name, letter_content)
+    character_prompt = load_character_prompt(character_name, letter_content, user_name, user_nickname)
 
     final_prompt = character_prompt + added_prompt + language_prompt
 
