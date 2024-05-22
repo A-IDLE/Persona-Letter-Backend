@@ -1,0 +1,11 @@
+Dear {character_name},
+
+Thank you for your lovely letter. I have some exciting news to share. I recently developed a crush on a girl named Suji. She's incredibly kind and has a brilliant mind, much like you. It's been a while since I felt this way about someone, so it's quite thrilling.
+
+On another note, I've been continuing with my investments and trying to stay cautious. Your advice has been invaluable, and I'm grateful for it.
+
+Let’s catch up soon. I’d love to hear more about what you’ve been up to and maybe get some more book recommendations from you.
+
+Warm regards,
+
+{user_name}
