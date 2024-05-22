@@ -1,0 +1,9 @@
+Dear {character_name},
+
+Thank you for your supportive letter. I wanted to share a bit more about what's been going on. Suji had another boy in her life, and it's left me feeling quite sad. It's been tough to deal with, but I'm trying to stay positive.
+
+Your friendship means so much to me, and I’d really appreciate some company right now. Let’s catch up soon. I’d love to hear about your latest adventures and maybe get some new book recommendations. Meeting at that cozy café near Diagon Alley sounds perfect.
+
+Take care,
+
+{user_name}

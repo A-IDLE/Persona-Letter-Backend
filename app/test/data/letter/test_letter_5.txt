@@ -1,0 +1,11 @@
+Dear {character_name},
+
+Thank you for your last letter. I wanted to share a bit more about Suji, the girl I mentioned. She's from South Africa and has the most fascinating stories about her home. We've been getting along quite well, and I'm really enjoying getting to know her.
+
+Your advice on investments continues to be helpful. I'm trying to be more prudent with my decisions, thanks to you.
+
+Let’s plan to meet up soon. I’d love to share more about Suji and hear all about what’s new with you. Perhaps we can visit that bookstore you mentioned?
+
+Take care,
+
+{user_name}

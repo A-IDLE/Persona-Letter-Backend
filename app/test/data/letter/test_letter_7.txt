@@ -1,0 +1,13 @@
+Dear {character_name},
+
+I hope this letter finds you immersed in a fascinating book or a captivating new spell. I recently visited a charming little village near the coast, and it made me think of how much you’d enjoy the historical significance and the quaint bookstores scattered around.
+
+Speaking of history, I came across an old manuscript detailing lesser-known magical artifacts. I know how much you love uncovering hidden knowledge, so I’ll be sure to bring it next time we meet. It’s amazing how much there still is to learn!
+
+On a different note, how are things at the Ministry? I’ve heard whispers about new initiatives you might be involved in. Knowing you, I’m sure you’re making significant strides and leaving a positive impact.
+
+I’m looking forward to catching up soon. Maybe we could plan a visit to one of those bookstores and grab some tea afterward?
+
+Warm regards,
+
+{user_name}
