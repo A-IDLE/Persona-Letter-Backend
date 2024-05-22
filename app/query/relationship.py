@@ -1,5 +1,5 @@
-from models.database import SessionLocal
-from models.models import Relationship
+from app.models.database import SessionLocal
+from app.models.models import Relationship
 
 
 

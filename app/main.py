@@ -1,22 +1,28 @@
+import sys
+import os
+
+# Ensure the top-level project directory is in the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from fastapi import FastAPI
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware  # CORS 미들웨어 임포트
 from dotenv import load_dotenv
 from pathlib import Path
 # ROUTERS
-from api.endpoints.get_a_letter import router as router3
-from api.endpoints.inbox_letter import router as router_inbox
-from api.endpoints.letter_router import router
-from api.endpoints.character_router import router as router_character
-from auth.auth import router as router_auth
+from app.api.endpoints.get_a_letter import router as router3
+from app.api.endpoints.inbox_letter import router as router_inbox
+from app.api.endpoints.letter_router import router
+from app.api.endpoints.character_router import router as router_character
+from app.auth.auth import router as router_auth
 # from api.router import router
-from models.database import init_db
-from models import *
-from services.others.setup import character_setup_by_names
-from services.vector_database import init_vectorDB
 from fastapi.middleware.cors import CORSMiddleware
-from auth.auth import AuthMiddleware
-from services.mail.smtp import router as router_mail
+from app.models.database import init_db
+from app.models import *
+from app.services.others.setup import character_setup_by_names
+from app.services.vector_database import init_vectorDB
+from app.auth.auth import AuthMiddleware
+from app.services.mail.smtp import router as router_mail
 
 # 맥 오류 해결 Error #15: Initializing libiomp5.dylib, but found libiomp5.dylib already initialized
 import os

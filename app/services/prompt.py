@@ -1,14 +1,14 @@
 from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
-from services.model import load_make_character_model
-from query.character import get_character_by_name
+from app.services.model import load_make_character_model
+from app.query.character import get_character_by_name
 
 
 ###### PROMPT LOADER
 def load_prompt(file_name):
     
-    root_path = "services/prompt/"
+    root_path = "app/services/prompt/"
     full_path = root_path+file_name+".md"
     
     print("loading prompt")

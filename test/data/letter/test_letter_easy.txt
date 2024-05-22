@@ -1,0 +1,11 @@
+Dear {character_name},
+
+Thank you for your kind and supportive letter. It means a lot to me during this tough time.
+
+I was wondering, do you remember how much I've earned and lost on Tesla in total?
+
+Also, do you remember the nationality and appearance of Suji? I feel like talking about it might help me process everything. 
+
+Take care,
+
+{user_name}

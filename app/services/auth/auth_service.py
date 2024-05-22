@@ -1,8 +1,8 @@
-from query.user import get_user_by_email, create_user, update_user_name, update_user_nickname  # update_user_name 추가
-from models.models import User
 from pydantic import BaseModel
 from firebase_admin import auth
 from fastapi import HTTPException
+from app.query.user import get_user_by_email, create_user, update_user_name, update_user_nickname  # update_user_name 추가
+from app.models.models import User
 
 class TokenData(BaseModel):
     accessToken: str

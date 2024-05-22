@@ -1,16 +1,9 @@
-from fastapi import APIRouter
-from services.character_service import get_characters
-from schemas.schemas import CharacterDto
-from fastapi import FastAPI,APIRouter, Depends, Request
-from services.letter_service import write_letter
-from schemas.schemas import CharacterDto
-from models.models import Character
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from models.database import get_db
-from typing import List
-from fastapi import Request
-from services.mail.smtp import send_email
 from fastapi import HTTPException
+from app.models.database import get_db
+from app.models.models import Character
+from app.services.character_service import get_characters
 
 router = APIRouter()
 

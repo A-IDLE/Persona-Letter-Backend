@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from services.inbox_service import get_user_inbox
-from services.inbox_service import get_user_outbox
+from app.services.inbox_service import get_user_inbox, get_user_outbox
 
 router = APIRouter()
 
