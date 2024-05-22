@@ -8,7 +8,7 @@ from models.database import get_db
 from typing import List
 from fastapi import Request
 from services.mail.smtp import send_email
-from query.letter import get_letters_by_reception_status
+from query.letter import get_letters_by_reception_status, update_letter_read_status
 from utils.utils import get_user_id_from_request, get_email_from_request
 from query.letter import get_letters_by_character_id, get_a_letter
 
@@ -16,23 +16,23 @@ from query.letter import get_letters_by_character_id, get_a_letter
 router = APIRouter()
 
 
-@router.post("/writeLetter")
-def writeLetter(request: Request, letter: LetterDto):
+# @router.post("/writeLetter")
+# def writeLetter(request: Request, letter: LetterDto):
 
-    user_info = request.state.user
-    userId = user_info.get("userId")
-    # print(userId)
+#     user_info = request.state.user
+#     userId = user_info.get("userId")
+#     # print(userId)
 
-    letter_sent = letter
-    letter_received = create_letter(letter_sent)
+#     letter_sent = letter
+#     letter_received = write_letter(letter_sent)
 
-    # userEmail을 추출
-    user_info = request.state.user
-    email = user_info.get("email")
+#     # userEmail을 추출
+#     user_info = request.state.user
+#     email = user_info.get("email")
 
-    send_email(email)
+#     send_email(email)
 
-    return letter_received
+#     return letter_received
 
 # # 보낸편지 받은편지 전체 조회
 # @router.get("/readLetter")
@@ -56,20 +56,18 @@ def get_letters(character_id: int, request: Request, db: Session = Depends(get_d
 
     letters = get_letters_by_character_id(user_id, character_id, db)
 
-    print(letters)
     return letters
 
 # 받은편지 읽음처리
 @router.put("/letterStatus/{letter_id}")
 def update_letter_status(letter_id: int, db: Session = Depends(get_db)):
-    letter = db.query(Letter).filter(Letter.letter_id == letter_id).first()  # letter_id로 수정
-    if not letter:
+    result = update_letter_read_status(letter_id, True)
+    if result == "Letter not found.":
         raise HTTPException(status_code=404, detail="Letter not found")
+    elif "Error" in result:
+        raise HTTPException(status_code=500, detail=result)
 
-    letter.read_status = True  # Boolean 타입으로 수정
-    db.commit()
-    db.refresh(letter)
-    return letter
+    return {"message": result}
 
 
 @router.get("/letters/{letter_id}")
