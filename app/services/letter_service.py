@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 
 def create_letter(letter: LetterDto, db: Session):
 
-    pinecone_delete_namespace("6_3") # 테스트용 코드
+    # pinecone_delete_namespace("6_3") # 테스트용 코드
     
     # 편지 객체 초기화
     letter_sending = Letter()
