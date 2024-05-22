@@ -1,11 +1,11 @@
 # CHARACTER RELATED
-from models.models import Character
-from services.model import load_make_character_model
-from services.prompt import load_prompt
 from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
-from query.character import create_character
+from app.query.character import create_character
+from app.models.models import Character
+from app.services.model import load_make_character_model
+from app.services.prompt import load_prompt
 
 
 def parse_character_description(description, character_name):

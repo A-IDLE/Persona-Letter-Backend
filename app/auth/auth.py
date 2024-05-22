@@ -1,17 +1,17 @@
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import auth
-from fastapi import Depends, HTTPException, Security, APIRouter, status, Request, Query
+from fastapi import Depends, HTTPException, Security, APIRouter, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from services.auth.auth_service import google_login, update_user_name_after_login, get_user_name, update_user_nickname_after_login
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 from pydantic import BaseModel
+from app.services.auth.auth_service import google_login, update_user_name_after_login, get_user_name, update_user_nickname_after_login
 
 
 router = APIRouter()
 
-cred = credentials.Certificate("../serviceAccountKey.json")
+cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 
 

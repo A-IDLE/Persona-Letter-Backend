@@ -1,13 +1,10 @@
-from services.vector_database import pinecone_delete_namespace
-from services.letter.write import write_letter
-from services.letter.save import save_letter
-from query.letter import Letter
-from query.letter import get_a_letter
-from services.embeddings import embed_letter_pinecone
 from datetime import datetime
-from schemas.schemas import LetterDto
-from models.database import SessionLocal
 from sqlalchemy.orm import Session
+from app.schemas.schemas import LetterDto
+from app.services.letter.write import write_letter
+from app.services.letter.save import save_letter
+from app.query.letter import Letter
+from app.query.letter import get_a_letter
 
 
 def create_letter(letter: LetterDto, db: Session):

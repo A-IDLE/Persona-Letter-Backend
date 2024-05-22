@@ -1,16 +1,12 @@
-from services.letter_service import create_letter
-from schemas.schemas import LetterDto
-from fastapi import FastAPI, APIRouter, Depends, HTTPException, Request
-from schemas.schemas import LetterDto
-from models.models import Letter
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
-from models.database import get_db
-from typing import List
-from fastapi import Request
-from services.mail.smtp import send_email
-from query.letter import get_letters_by_reception_status, update_letter_read_status
-from utils.utils import get_user_id_from_request, get_email_from_request
-from query.letter import get_letters_by_character_id, get_a_letter
+from schemas.schemas import LetterDto
+from app.models.database import get_db
+from app.schemas.schemas import LetterDto
+from app.services.mail.smtp import send_email
+from app.services.letter_service import create_letter
+from app.utils.utils import get_user_id_from_request, get_email_from_request
+from app.query.letter import get_letters_by_character_id, get_a_letter, get_letters_by_reception_status, update_letter_read_status
 
 
 router = APIRouter()
@@ -49,12 +45,12 @@ router = APIRouter()
 
 
 @router.get("/character/{character_id}/letters")
-def get_letters(character_id: int, request: Request, db: Session = Depends(get_db)):
+def get_letters(character_id: int, request: Request):
 
     # 사용자의 아이디를 받는다
     user_id = get_user_id_from_request(request)
 
-    letters = get_letters_by_character_id(user_id, character_id, db)
+    letters = get_letters_by_character_id(user_id, character_id)
 
     return letters
 

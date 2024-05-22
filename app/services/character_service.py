@@ -1,7 +1,4 @@
-from query.character import Character, get_all_characters_for_main
-from schemas.schemas import CharacterDto
-from models.database import SessionLocal
-import json
+from app.query.character import get_all_characters_for_main
 from collections import defaultdict
 
 def get_characters():

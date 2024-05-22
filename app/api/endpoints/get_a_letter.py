@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from services.letter_service import get_a_letter
-from schemas.schemas import LetterDto
+from app.services.letter_service import get_a_letter
 
 router = APIRouter()
 

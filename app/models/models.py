@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, JSON
 from sqlalchemy.sql import func
 from .base import Base
 
@@ -74,9 +74,11 @@ class RagTestData(Base):
     chunk_overlap = Column(Integer)
     top_k = Column(Integer)
     filter = Column(Text, nullable=True)
+    basic_character_prompt = Column(Text)
     generate_questions_prompts = Column(Text)
-    generated_questions = Column(Text)
+    generated_questions = Column(JSON)
+    retrieved_info = Column(JSON)
     refining_retrieved_info_prompt = Column(Text)
     refined_info = Column(Text)
     notes = Column(Text, nullable=True)
-    updated_time = Column(DateTime, onupdate=func.now())
+    updated_time = Column(DateTime, onupdate=func.now(), nullable=True)

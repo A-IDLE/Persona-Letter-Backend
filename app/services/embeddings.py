@@ -5,13 +5,12 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.embeddings import CacheBackedEmbeddings
 from langchain_core.documents.base import Document
 from langchain.storage import LocalFileStore
-from utils.utils import load_pdf, load_txt, identify_path
-from services.vector_database import load_vector_db, pinecone_upsert
-from models.models import Letter
-from pinecone import Pinecone
 from openai import OpenAI
 from openai import OpenAIError
 import os
+from app.utils.utils import load_pdf, load_txt, identify_path
+from app.services.vector_database import load_vector_db, pinecone_upsert
+from app.models.models import Letter
 
 
 

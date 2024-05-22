@@ -1,7 +1,7 @@
 from requests import Session
-from models.models import Letter
-from models.database import SessionLocal
-from services.embeddings import embed_letter_pinecone
+from app.models.models import Letter
+from app.models.database import SessionLocal
+from app.services.embeddings import embed_letter_pinecone
 
 
 

@@ -1,15 +1,10 @@
-import json
-from dotenv import load_dotenv
-import openai
-from services.embeddings import text_to_vector
-from services.vector_database import load_vector_db, load_cached_db, pinecone_init
 from langchain_community.retrievers import BM25Retriever
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.retrievers import EnsembleRetriever
-from utils.utils import load_pdf, load_txt
-from pinecone import Pinecone
-from openai import OpenAI
-import os
+from app.utils.utils import load_pdf, load_txt
+from app.services.embeddings import text_to_vector
+from app.services.vector_database import load_vector_db, pinecone_init
+
 
 
 def load_faiss_retriever():
@@ -143,6 +138,70 @@ def fetch_relevant_contexts(user_id, character_id, question_embedding):
             namespace=namespace,
             vector=question_embedding,
             top_k=1,
+            include_values=True,
+            include_metadata=True
+            )
+    
+    if not response.get('matches'):
+        print("No matches found.")
+        return contexts
+
+    contexts.extend([match['metadata']['text'] for match in response['matches']])
+    print(f"Retrieved {len(contexts)} contexts.")
+
+    return contexts
+
+
+## FOR TESTING
+def get_pinecone_retriever_test(user_id: int, character_id: int, questions: [str], top_k: int):
+    """
+    Retrieve relevant contexts for specific user and character based on given questions.
+
+    Args:
+        user_id (int): User ID
+        character_id (int): Character ID
+        questions ([str]): List of questions
+
+    Returns:
+        list: List of relevant contexts
+    """
+    contexts = []
+
+    for question in questions:
+        embedding_response = text_to_vector(question)
+        if not embedding_response.get('data'):
+            raise ValueError("Failed to generate embedding for the question.")
+        
+        question_embedding = embedding_response['data'][0]['embedding']
+        retrieved_contexts = fetch_relevant_contexts_test(user_id, character_id, question_embedding, top_k)
+        contexts.extend(retrieved_contexts)
+        
+    return contexts
+
+def fetch_relevant_contexts_test(user_id, character_id, question_embedding, top_k):
+    """
+    Helper function to fetch relevant contexts with retries.
+
+    Args:
+        user_id (int): User ID
+        character_id (int): Character ID
+        question_embedding (list): Embedding of the question
+
+    Returns:
+        list: List of retrieved contexts
+    """
+
+    index = pinecone_init()
+    namespace = f"{user_id}_{character_id}"
+    contexts = []
+
+    print("Fetching relevant contexts...")
+
+    # response = index.query(index_name, namespace, question_embedding)
+    response = index.query(
+            namespace=namespace,
+            vector=question_embedding,
+            top_k=top_k,
             include_values=True,
             include_metadata=True
             )

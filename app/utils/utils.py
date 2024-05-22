@@ -3,7 +3,7 @@ import logging
 from langchain_community.document_loaders import PyPDFLoader 
 from langchain_community.document_loaders import TextLoader
 from fastapi import Request
-from query.user import get_user_by_email
+from app.query.user import get_user_by_email
 
 
 ###### LOADER

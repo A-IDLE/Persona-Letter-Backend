@@ -2,10 +2,10 @@ import os
 
 # Add the root directory of the project to sys.path
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from models.models import Letter
-from services.letter.write import write_letter
-from services.letter.save import save_letter
-from query.character import get_character_by_id
+from app.models.models import Letter
+from app.services.letter.write import write_letter
+from app.services.letter.save import save_letter
+from app.query.character import get_character_by_id
 
 
 # Define the path of the letter directory

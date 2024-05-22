@@ -1,5 +1,5 @@
-from models.models import User
-from models.database import SessionLocal
+from app.models.models import User
+from app.models.database import SessionLocal
 from sqlalchemy.orm import Session
 
     

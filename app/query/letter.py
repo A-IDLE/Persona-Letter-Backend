@@ -1,5 +1,5 @@
-from models.database import SessionLocal
-from models.models import Letter, Character
+from app.models.database import SessionLocal
+from app.models.models import Letter, Character
 from sqlalchemy.orm import Session
 
 def create_letter(letter: Letter):
@@ -20,12 +20,12 @@ def get_a_letter(letter_id: int):
         return f"Error getting the letter: {str(e)}"
 
 
-def get_letters_by_character_id(user_id: int, character_id: int, db: Session):
-
+def get_letters_by_character_id(user_id: int, character_id: int):
     try:
-        letters = db.query(Letter).filter(
-            Letter.user_id == user_id, Letter.character_id == character_id).all()
-        return letters
+        with SessionLocal() as session:
+            letters = session.query(Letter).filter(
+                Letter.user_id == user_id, Letter.character_id == character_id).all()
+            return letters
     except Exception as e:
         return f"Error getting letters for user and character: {str(e)}"
 

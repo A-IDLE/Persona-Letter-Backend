@@ -1,5 +1,5 @@
-from models.models import Character
-from models.database import SessionLocal    
+from app.models.models import Character
+from app.models.database import SessionLocal    
 
     
 def create_character(character: Character):

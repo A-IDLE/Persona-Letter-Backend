@@ -1,6 +1,6 @@
-from models.database import SessionLocal
-from query.letter import Letter
-from query.character import Character  
+from app.models.database import SessionLocal
+from app.query.letter import Letter
+from app.query.character import Character  
 
 def get_user_inbox(user_id: int, character_id: int):
     try:
