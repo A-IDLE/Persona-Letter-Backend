@@ -60,3 +60,23 @@ class Relationship(Base):
     active_status = Column(Boolean, default=True)
     created_time = Column(DateTime, server_default=func.now())
     updated_time = Column(DateTime, onupdate=func.now())
+    
+class RagTestData(Base):
+    __tablename__ = 'tbl_rag_test_data'
+    
+    rag_test_data_id = Column(Integer, primary_key=True, autoincrement=True)
+    created_time = Column(DateTime, server_default=func.now())
+    version = Column(String(100))
+    changes = Column(Text, nullable=True)
+    request_letter_content = Column(Text)
+    response_letter_content = Column(Text)
+    chunk_size = Column(Integer)
+    chunk_overlap = Column(Integer)
+    top_k = Column(Integer)
+    filter = Column(Text, nullable=True)
+    generate_questions_prompts = Column(Text)
+    generated_questions = Column(Text)
+    refining_retrieved_info_prompt = Column(Text)
+    refined_info = Column(Text)
+    notes = Column(Text, nullable=True)
+    updated_time = Column(DateTime, onupdate=func.now())

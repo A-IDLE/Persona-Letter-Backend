@@ -1,5 +1,6 @@
 from models.database import SessionLocal
 from models.models import Letter, Character
+from sqlalchemy.orm import Session
 
 def create_letter(letter: Letter):
     try:
@@ -10,7 +11,7 @@ def create_letter(letter: Letter):
     except Exception as e:
         return f"Error saving the letter: {str(e)}"
 
-def get_letter_by_id(letter_id: int):
+def get_a_letter(letter_id: int):
     try:
         with SessionLocal() as session:
             letter = session.query(Letter).filter(Letter.letter_id == letter_id).first()
@@ -18,13 +19,15 @@ def get_letter_by_id(letter_id: int):
     except Exception as e:
         return f"Error getting the letter: {str(e)}"
 
-def get_letters_by_character(character_id: int):
+
+def get_letters_by_character_id(user_id: int, character_id: int, db: Session):
+
     try:
-        with SessionLocal() as session:
-            letters = session.query(Letter).filter(Letter.character_id == character_id).all()
-            return letters
+        letters = db.query(Letter).filter(
+            Letter.user_id == user_id, Letter.character_id == character_id).all()
+        return letters
     except Exception as e:
-        return f"Error getting letters for character: {str(e)}"
+        return f"Error getting letters for user and character: {str(e)}"
 
 def get_letters_by_user(user_id: int):
     try:
@@ -70,7 +73,7 @@ def get_letters_by_user_id_and_character_id(user_id: int, character_id: int):
         return f"Error getting letters for user and character: {str(e)}"
     
     
-def query_get_letters_by_reception_status(user_id: int, character_id: int, reception_status: str):
+def get_letters_by_reception_status(user_id: int, character_id: int, reception_status: str):
     try:
         with SessionLocal() as session:  
             # Letter 테이블과 Character 테이블을 조인하고 필요한 정보를 선택합니다.
@@ -102,3 +105,5 @@ def query_get_letters_by_reception_status(user_id: int, character_id: int, recep
     except Exception as e:
         print("삐빅에러",e)  # 오류가 발생하면 오류 메시지를 출력합니다.
         return None
+    
+    
