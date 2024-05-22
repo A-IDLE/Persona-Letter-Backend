@@ -7,6 +7,7 @@ class LetterDto(BaseModel):
     letter_content: str
     read_status : bool
     reception_status : str | None = None
+    letter_image_status : int | None = None
     created_date: datetime | None = None
 
 class CharacterDto(BaseModel):
