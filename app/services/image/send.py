@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 from requests import Session
 
+from query.character import get_character_by_id
 from models.models import Letter
 from services.image.generate import image_questions
 
@@ -25,7 +26,9 @@ def sqs_message(letter:Letter) -> None:
     try:
         letter_content = letter.letter_content
         letter_id = letter.letter_id
+        character_name = get_character_by_id(letter.character_id).character_name 
         keywords = image_questions(letter_content)
+        keywords = f"{character_name}, {keywords}"
         print(f"sqs_message keywords : {keywords}")
         print(f"\nsqs_message letter_id : {letter_id}")
         message = {
