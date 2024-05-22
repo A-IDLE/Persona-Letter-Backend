@@ -30,7 +30,7 @@ class Letter(Base):
     user_id = Column(Integer)
     reception_status = Column(String(30))
     letter_content = Column(Text)
-    letter_image_url = Column(String(2048))
+    letter_image_status = Column(Boolean, default=False)
     read_status = Column(Boolean, default=False)
     created_time = Column(DateTime, server_default=func.now())
     
