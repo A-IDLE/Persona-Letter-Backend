@@ -181,7 +181,7 @@ def write_letter_character(letter_send: Letter):
     # 1. Prompt
     character_prompt = load_character_prompt(character_name, letter_content)
 
-    final_prompt = character_prompt + added_prompt + language_prompt
+    final_prompt = character_prompt + added_prompt
 
     prompt = PromptTemplate.from_template(final_prompt)
 

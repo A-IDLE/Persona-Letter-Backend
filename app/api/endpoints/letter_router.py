@@ -10,6 +10,7 @@ from typing import List
 from fastapi import Request
 from services.mail.smtp import send_email
 from services.letter import get_letters_by_character_id, get_a_letter, get_letters_by_reception_status
+from query.letter import update_letter_read_status
 from utils.utils import get_user_id_from_request, get_email_from_request
 
 
@@ -61,14 +62,13 @@ def get_letters(character_id: int, request: Request, db: Session = Depends(get_d
 # 받은편지 읽음처리
 @router.put("/letterStatus/{letter_id}")
 def update_letter_status(letter_id: int, db: Session = Depends(get_db)):
-    letter = db.query(Letter).filter(Letter.letter_id == letter_id).first()  # letter_id로 수정
-    if not letter:
+    result = update_letter_read_status(letter_id, True)
+    if result == "Letter not found.":
         raise HTTPException(status_code=404, detail="Letter not found")
+    elif "Error" in result:
+        raise HTTPException(status_code=500, detail=result)
 
-    letter.read_status = True  # Boolean 타입으로 수정
-    db.commit()
-    db.refresh(letter)
-    return letter
+    return {"message": result}
 
 
 @router.get("/letters/{letter_id}")
