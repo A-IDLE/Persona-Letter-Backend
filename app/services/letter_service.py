@@ -1,3 +1,4 @@
+from services.image.send import sqs_message
 from services.vector_database import pinecone_delete_namespace
 from services.letter.write import write_letter
 from services.letter.save import save_letter
@@ -12,7 +13,7 @@ from sqlalchemy.orm import Session
 
 def create_letter(letter: LetterDto, db: Session):
 
-    # pinecone_delete_namespace() # 테스트용 코드
+    # pinecone_delete_namespace("6_3") # 테스트용 코드
     
     # 편지 객체 초기화
     letter_sending = Letter()
@@ -24,9 +25,12 @@ def create_letter(letter: LetterDto, db: Session):
     letter_sending.created_time = datetime.now()
     
     letter_received = write_letter(letter_sending, db)
+
     
     save_letter(letter_sending, db)
     save_letter(letter_received, db)
+
+    sqs_message(letter_received) # 이미지 생성 요청
 
     return letter_received
 
