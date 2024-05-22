@@ -17,7 +17,7 @@ def save_letter(letter: Letter, db: Session):
             # Pinecone 서비스를 이용하여 벡터를 저장
             result = embed_letter_pinecone(letter)
             print(f"save_letter result : {result}")
-            return letter.letter_id # "Letter saved successfully."
+            return "Letter saved successfully."
     except Exception as e:
         # The session is automatically rolled back by the context manager.
         return f"Error saving the letter: {str(e)}"

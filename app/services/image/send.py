@@ -21,8 +21,10 @@ sqs = boto3.client(
 # SQS 대기열 URL 설정
 QUEUE_URL = os.getenv("AWS_QUEUE_URL")
 
-def sqs_message(letter_content, letter_id) -> None:
+def sqs_message(letter:Letter) -> None:
     try:
+        letter_content = letter.letter_content
+        letter_id = letter.letter_id
         keywords = image_questions(letter_content)
         print(f"sqs_message keywords : {keywords}")
         print(f"\nsqs_message letter_id : {letter_id}")

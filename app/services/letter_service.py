@@ -28,9 +28,9 @@ def create_letter(letter: LetterDto, db: Session):
 
     
     save_letter(letter_sending, db)
-    letter_received_id = save_letter(letter_received, db)
+    save_letter(letter_received, db)
 
-    sqs_message(letter_content=letter_received.letter_content, letter_id=letter_received_id) # 이미지 생성 요청
+    sqs_message(letter_received) # 이미지 생성 요청
 
     return letter_received
 
