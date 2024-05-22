@@ -10,9 +10,11 @@ from datetime import datetime
 from models.models import Letter
 from query.character import get_character_by_id
 from query.letter import get_letters_by_user_id_and_character_id, query_get_letters_by_reception_status
+from query.user import get_user_by_id
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException
 from models.database import get_db
+from fastapi import Depends
 
 
 def generate_questions(letter):
@@ -108,10 +110,10 @@ def retrieve_through_letter(letter_content: str, user_id: int, character_id: int
     return related_letters
 
 
-def write_letter(letter):
+def write_letter(letter, db: Session):
     # 1. Embed the received Letter
 
-    related_letters = retrieve_through_letter(letter)
+    related_letters = retrieve_through_letter(letter, db)
     # related_letters_str = [document_to_string(related_letter) for related_letter in related_letters]
     related_letters_str = [f"Document content: {related_letter}" for related_letter in related_letters]
     
@@ -125,7 +127,8 @@ def write_letter(letter):
     )
 
     # 1. Prompt
-    file_name = "hermione_markdown_0509"
+    # file_name = "form"
+    file_name = "hermione_markdown_0.3.1"
 
     hermione_prompt = load_prompt(file_name)
     final_prompt = hermione_prompt + added_prompt
@@ -148,14 +151,16 @@ def write_letter(letter):
 
         response = chain.invoke(letter)
 
-        return response
+        # 5. Create letter_receiving
+        letter_receiving = write_letter_character(letter, db)
+        return letter_receiving
 
     except Exception as e:
         ("An error occurred: " + str(e))
         pass
 
 
-def write_letter_character(letter_send: Letter):
+def write_letter_character(letter_send: Letter, db: Session):
 
     # Extract the letter content, user_id, character_id
     letter_content = letter_send.letter_content
@@ -166,7 +171,14 @@ def write_letter_character(letter_send: Letter):
     character = get_character_by_id(letter_send.character_id)
 
     character_name = character.character_name
+
+    # user_id를 통해서 user 정보 찾기
+    user = get_user_by_id(user_id, db)
+    user_name = user.user_name if user else 'User'
+    user_nickname = user.user_nickname if user else 'User'
     
+    print(f"user_name: {user_name}, user_nickname: {user_nickname}")  # 로그 추가
+
     related_letters = retrieve_through_letter(letter_content, user_id, character_id)
     
     # related_letters_str = [document_to_string(related_letter) for related_letter in related_letters]
@@ -179,9 +191,9 @@ def write_letter_character(letter_send: Letter):
     )
 
     # 1. Prompt
-    character_prompt = load_character_prompt(character_name, letter_content)
+    character_prompt = load_character_prompt(character_name, letter_content, user_name, user_nickname)
 
-    final_prompt = character_prompt + added_prompt + language_prompt
+    final_prompt = character_prompt + added_prompt
 
     prompt = PromptTemplate.from_template(final_prompt)
 

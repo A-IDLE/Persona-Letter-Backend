@@ -1,5 +1,7 @@
 from models.models import User
 from models.database import SessionLocal
+from sqlalchemy.orm import Session
+
     
 def create_user(user: User):
     try:
@@ -18,7 +20,7 @@ def get_user_by_email(email: str):
     except Exception as e:
         return f"Error getting the user: {str(e)}"
     
-def get_user_by_id(user_id: int):
+def get_user_by_id(user_id: int, db: Session):
     try:
         with SessionLocal() as session:
             user = session.query(User).filter(User.user_id == user_id).first()

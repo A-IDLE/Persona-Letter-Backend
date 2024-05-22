@@ -17,14 +17,15 @@ router = APIRouter()
 
 
 @router.post("/writeLetter")
-def writeLetter(request: Request, letter: LetterDto):
+def writeLetter(request: Request, letter: LetterDto, db: Session = Depends(get_db)):
 
     user_info = request.state.user
     userId = user_info.get("userId")
+    letter.user_id = userId
     # print(userId)
 
     letter_sent = letter
-    letter_received = write_letter(letter_sent)
+    letter_received = write_letter(letter_sent, db)
 
     # userEmail을 추출
     user_info = request.state.user
@@ -96,6 +97,7 @@ def get_letter(letter_id: int, request: Request, db: Session = Depends(get_db)):
 def writeLetter(
     request: Request,
     letter: LetterDto,
+    db: Session = Depends(get_db),
     user_id=Depends(get_user_id_from_request)
 ):
 
@@ -106,7 +108,9 @@ def writeLetter(
     letter_sent = letter
     letter_sent.user_id = user_id
 
-    letter_received = write_letter(letter_sent)
+    letter.user_id = user_id
+
+    letter_received = write_letter(letter_sent, db)
 
     # userEmail을 추출
     email = get_email_from_request(request)

@@ -6,9 +6,11 @@ from services.embeddings import embed_letter, embed_letter_pinecone
 from datetime import datetime
 from schemas.schemas import LetterDto
 from models.database import SessionLocal
+from sqlalchemy.orm import Session
 
 
-def write_letter(letter: LetterDto):
+
+def write_letter(letter: LetterDto, db: Session):
 
     # pinecone_delete_namespace() # 테스트용 코드
     
@@ -21,7 +23,7 @@ def write_letter(letter: LetterDto):
     letter_sending.letter_content =  letter.letter_content
     letter_sending.created_time = datetime.now()
     
-    letter_received = write_letter_character(letter_sending)
+    letter_received = write_letter_character(letter_sending, db)
     # letter_receiving = Letter()
     # letter_receiving.character_id = letter.character_id
     # letter_receiving.user_id = letter.user_id
@@ -31,26 +33,25 @@ def write_letter(letter: LetterDto):
     # letter_receiving.created_time = datetime.now()
 
     
-    save_letter(letter_sending)
-    save_letter(letter_received)
+    save_letter(letter_sending, db)
+    save_letter(letter_received, db)
 
     return letter_received
 
 
 
-def save_letter(letter: Letter):
+def save_letter(letter: Letter, db: Session):
     try:
         with SessionLocal() as session:
             # embed_letter(letter)
             session.add(letter)
             session.commit()
             result = embed_letter_pinecone(letter)
-            print(f"save_letter result : {result}")
             return "Letter saved successfully."
     except Exception as e:
         # The session is automatically rolled back by the context manager.
         return f"Error saving the letter: {str(e)}"
     
 
-def get_a_letter(letter_id: int):
-    return get_letter_by_id(letter_id)
+def get_a_letter(letter_id: int, db: Session):
+    return get_letter_by_id(letter_id, db)
