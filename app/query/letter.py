@@ -94,7 +94,7 @@ def get_letters_by_reception_status(user_id: int, character_id: int, reception_s
                     "letter_id": letter.letter_id,
                     "character_name": character_name,
                     "letter_content": letter.letter_content,
-                    "letter_image_url": letter.letter_image_url,
+                    "letter_image_status": 0,
                     "read_status": letter.read_status,
                     "created_time": letter.created_time,
                     # 추가적으로 필요한 Letter 필드를 여기에 포함시킬 수 있습니다.
