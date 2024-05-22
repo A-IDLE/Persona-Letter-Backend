@@ -24,7 +24,7 @@ def write_letter(letter_send: Letter, db: Session):
     character_id = letter_send.character_id
     
     # 관련된 정보를 retrieval을 통해서 가져온다
-    related_letters = retrieve_through_letter(letter_content, user_id, character_id)
+    related_letters = retrieve_through_letter(letter_content, user_id, character_id, db)
 
     related_letters_str = [f"Document content: {related_letter}" for related_letter in related_letters]
 
