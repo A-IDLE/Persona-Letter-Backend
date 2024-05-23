@@ -1,3 +1,5 @@
+*.faiss
+*.pkl
 
 .env
 
@@ -6,7 +8,7 @@ cache/
 app/database/vectorDB/DB_INDEX.faiss
 app/database/vectorDB/DB_INDEX.pkl
 
-database/
+app/database/
 
 __pycache__/
 

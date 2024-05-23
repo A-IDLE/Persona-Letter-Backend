@@ -12,7 +12,7 @@ def image_questions(letter):
         {question}
         
         #example answer format:
-        "keyword1, keyword2, keyword3, keyword4, keyword5"
+        keyword1, keyword2, keyword3, keyword4, keyword5
         """
 
     prompt = PromptTemplate.from_template(prompt_text)

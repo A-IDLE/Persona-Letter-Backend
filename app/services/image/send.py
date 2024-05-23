@@ -27,13 +27,17 @@ def sqs_message(letter:Letter) -> None:
         letter_content = letter.letter_content
         letter_id = letter.letter_id
         character_name = get_character_by_id(letter.character_id).character_name 
-        keywords = image_questions(letter_content)
-        keywords = f"{character_name}, {keywords}"
+        generated_keywords = image_questions(letter_content)
+        keywords = f"{character_name}, {generated_keywords}"
+        json_file_path = 'app/services/image/prompt/workflow_api.json' # 적용하고 싶은 ComfyUI 프롬프트 JSON 파일 경로
+        with open(json_file_path, 'r') as file:
+            prompt_text = json.load(file)
         print(f"sqs_message keywords : {keywords}")
         print(f"\nsqs_message letter_id : {letter_id}")
         message = {
             'keywords': keywords,
-            'letter_id': letter_id
+            'letter_id': letter_id,
+            'prompt_text': prompt_text
         }
         message = json.dumps(message) # JSON 형식으로 변환
         response = sqs.send_message(
