@@ -82,3 +82,4 @@ class RagTestData(Base):
     refined_info = Column(Text)
     notes = Column(Text, nullable=True)
     updated_time = Column(DateTime, onupdate=func.now(), nullable=True)
+    total_words = Column(Integer, nullable=True)
