@@ -2,30 +2,18 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.prompts import PromptTemplate
 from app.services.prompt import load_prompt
-from app.services.model import load_model
+from app.services.model import load_model, LLM
+from langchain_community.callbacks.manager import get_openai_callback
+
 
 def generate_questions(letter):
 
-    # prompt_text = """
-    #     You are an AI assistant tasked with using a given format to find the content that needs to be searched for a given context.
-    #     Please answer in format only, without any other content. Please find at least 3 and no more than 10 items.
-    #     Returns the found contents as a Python list.
-    #     #question:
-    #     {question}
-        
-    #     #example answer format:
-    #     ["found content1", "found content2", "found content3", "found content4", "found content5"]
-            # """
-
-    dir_path = "generate_questions/"
-    file_name = "generate_questions_0.1"
-    full_path = dir_path+file_name
-
+    full_path = "generate_questions_0.1"
     prompt_text = load_prompt(full_path)
 
     prompt = PromptTemplate.from_template(prompt_text)
 
-    llm = load_model()
+    llm = LLM()
 
     llm_chain = (
         {"question": RunnablePassthrough()}
@@ -34,45 +22,30 @@ def generate_questions(letter):
         | StrOutputParser()
     )
 
-    response = llm_chain.with_config(configuarble={"llm":"gpt-4o"}).invoke(letter)
-    
+    # response = llm_chain.invoke(letter)
+
+    with get_openai_callback() as cb:
+        response = llm_chain.invoke(letter)
+
+        print(f"총 사용된 토큰수: \t\t{cb.total_tokens}")
+        print(f"프롬프트에 사용된 토큰수: \t{cb.prompt_tokens}")
+        print(f"답변에 사용된 토큰수: \t{cb.completion_tokens}")
+        print(f"호출에 청구된 금액(USD): \t${cb.total_cost}")
+
     return response
 
 
 def refining_retrieved_info(retrieved_info: str, letter_content: str):
 
-    # promt_text = f"""
-    #     # Original Letter:
-    #     {letter_content}
-        
-        
-    #     # Retrieved_info:
-    #     {retrieved_info}
-        
-    #     from above delete all the retrieved info that is not relevant to the original letter.
-        
-    #     answer only in format below:
-        
-    #     #Format
-    #     - info1
-    #     - info2
-    #     - info3
-    
-    # """
-    
-    dir_path = "refining_info/"
-    file_name = "refining_info_0.1"
-    full_path = dir_path+file_name
-
+    full_path = "refining_info_0.1"
     base_prompt = load_prompt(full_path)
-    
+
     prompt_inputs = {
         'letter_content': "letter_content",
         'retrieved_info': retrieved_info,
     }
-    
+
     prompt_text = base_prompt.format(**prompt_inputs)
-    
 
     prompt = PromptTemplate.from_template(prompt_text)
 
@@ -89,7 +62,15 @@ def refining_retrieved_info(retrieved_info: str, letter_content: str):
 
     try:
 
-        response = chain.invoke(letter_content)
+        # response = chain.invoke(letter_content)
+
+        with get_openai_callback() as cb:
+            response = chain.invoke(letter_content)
+
+            print(f"총 사용된 토큰수: \t\t{cb.total_tokens}")
+            print(f"프롬프트에 사용된 토큰수: \t{cb.prompt_tokens}")
+            print(f"답변에 사용된 토큰수: \t{cb.completion_tokens}")
+            print(f"호출에 청구된 금액(USD): \t${cb.total_cost}")
 
         print("\n\n\n\nTHIS IS REFINED RETRIEVED INFO \n\n")
         print(response)
@@ -102,13 +83,13 @@ def refining_retrieved_info(retrieved_info: str, letter_content: str):
     except Exception as e:
         ("An error occurred: " + str(e))
         pass
-    
+
 
 def verfiy_language(letter_content: str):
-    
+
     print("come to verify language")
     print(letter_content)
-    
+
     promt_text = """
         # Original Letter:
         {text}
@@ -124,10 +105,9 @@ def verfiy_language(letter_content: str):
     """
 
     prompt = PromptTemplate.from_template(promt_text)
-    
+
     print("this is prompt")
     print(prompt)
-    
 
     # 2. LLM
     llm = load_model()
@@ -142,9 +122,17 @@ def verfiy_language(letter_content: str):
 
     try:
         print("come to try")
-        
-        response = chain.invoke(letter_content)
-        
+
+        # response = chain.invoke(letter_content)
+
+        with get_openai_callback() as cb:
+            response = chain.invoke(letter_content)
+
+            print(f"총 사용된 토큰수: \t\t{cb.total_tokens}")
+            print(f"프롬프트에 사용된 토큰수: \t{cb.prompt_tokens}")
+            print(f"답변에 사용된 토큰수: \t{cb.completion_tokens}")
+            print(f"호출에 청구된 금액(USD): \t${cb.total_cost}")
+
         print("come to response")
         print(response)
 
@@ -158,6 +146,48 @@ def verfiy_language(letter_content: str):
         print("\n\n\n\n")
 
         return prompt
+
+    except Exception as e:
+        ("An error occurred: " + str(e))
+        pass
+
+
+def advanced_preprocessing_by_llm(letter_content: str):
+
+    full_path = "preprocessing"
+    prompt_text = load_prompt(full_path)
+    prompt = PromptTemplate.from_template(prompt_text)
+
+    # 2. LLM
+    llm = LLM(max_tokens=2000)
+
+    # 3. Chain
+    chain = (
+        {"letter_content": RunnablePassthrough()}
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
+
+    try:
+
+        # response = chain.invoke(letter_content)
+
+        with get_openai_callback() as cb:
+            response = chain.invoke(letter_content)
+
+            print(f"총 사용된 토큰수: \t\t{cb.total_tokens}")
+            print(f"프롬프트에 사용된 토큰수: \t{cb.prompt_tokens}")
+            print(f"답변에 사용된 토큰수: \t{cb.completion_tokens}")
+            print(f"호출에 청구된 금액(USD): \t${cb.total_cost}")
+
+        print("\n\n\n\nTHIS IS REFINED RETRIEVED INFO \n\n")
+        print(response)
+        print("-----"*10)
+        print("check 123")
+        print("\n\n\n\n")
+
+        return response
 
     except Exception as e:
         ("An error occurred: " + str(e))

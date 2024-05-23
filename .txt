@@ -1,0 +1,4 @@
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+(& 'C:\Users\201-24\anaconda3\shell\condabin\conda-hook.ps1' | Out-String | Invoke-Expression) | Out-Null
+# <<< conda initialize <<<
