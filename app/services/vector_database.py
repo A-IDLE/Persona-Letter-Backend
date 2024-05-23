@@ -135,8 +135,20 @@ def pinecone_init():
     except Exception as e:
         print(f"An error occurred while initializing the Pinecone index: {e}")
         return None
+
+def pinecone_delete_namespace(user_id: int, character_id: int):
+    """_summary_
+
+    Args:
+        user_id (int): _description_
+        character_id (int): _description_
+
+    Returns:
+        _type_: _description_
+    """
     
-def pinecone_delete_namespace(namespace="6_2"):
+    namespace = f"{user_id}_{character_id}"
+
     # Delete a namespace from the Pinecone index
     try:
         # Configure Pinecone client

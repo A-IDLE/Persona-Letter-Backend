@@ -11,9 +11,24 @@ from app.services.model import load_model
 from .retrieve import retrieve_through_letter, retrieve_letter_test
 from .generate import verfiy_language, refining_retrieved_info, generate_questions
 from app.models.models import RagTestData
-from app.query.test import create_test
+from test.query.test import create_test
 from app.query.letter import get_letters_by_character_id
 import json
+
+
+import logging
+
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+# Add a StreamHandler to ensure logs are shown in the console
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+logger.addHandler(console_handler)
+
 
 
 def write_letter(letter_send: Letter, db: Session):
@@ -104,6 +119,9 @@ def write_letter_test(letter_send: Letter, test: RagTestData):
     character_id = letter_send.character_id
     top_k = test.top_k
     
+    user_name = "John"
+    user_nickname = "John"
+    
     # 관련된 정보를 retrieval을 통해서 가져온다
     # related_letters = retrieve_through_letter(letter_content, user_id, character_id)
     
@@ -133,7 +151,7 @@ def write_letter_test(letter_send: Letter, test: RagTestData):
     character_name = character.character_name
     
     # 1. Prompt
-    character_prompt = load_character_prompt(character_name, letter_content)
+    character_prompt = load_character_prompt(character_name, letter_content, user_name, user_nickname)
 
     final_prompt = character_prompt + added_prompt + language_prompt
 
@@ -167,12 +185,17 @@ def write_letter_test(letter_send: Letter, test: RagTestData):
         letter_receiving.letter_content = response
         letter_receiving.created_time = datetime.now()
         
+         ## Calculate the total words in the response -> estimate tokens
+        total_words = len(response.split() + final_prompt.split())
+        print(f"\nTotal words: {total_words}")
+        
         
         # Save the test data
         test.response_letter_content = response
         test.generated_questions = generated_questions
         test.retrieved_info = related_letters_str
         test.refined_info = refined_retrieved_info
+        test.total_words = total_words
         
         print(test)
         
@@ -192,6 +215,9 @@ def write_letter_history(letter_send: Letter):
     letter_content = letter_send.letter_content
     user_id = letter_send.user_id
     character_id = letter_send.character_id
+    
+    user_name = "John"
+    user_nickname = "John"
    
     # check the language of the letter
     language_prompt = verfiy_language(letter_content)
@@ -200,17 +226,26 @@ def write_letter_history(letter_send: Letter):
     previous_letters = get_letters_by_character_id(user_id, character_id)
     
     # Convert the previous letters to str - sending as User and receiving as Character
-    previous_letters_str = "\n".join([f])
+    previous_letters_str = "\n".join(
+    [f"###User: \n{letter.letter_content}\n" if letter.reception_status == "sending" 
+     else f"###Character: \n{letter.letter_content}\n" if letter.reception_status == "receiving" 
+     else "" for letter in previous_letters]
+    )
+    
+    print("this is previous letters str")
+    print(previous_letters_str)
+    
+    
     # character_id를 통해서 character 찾는다
     character = get_character_by_id(letter_send.character_id)
     # 검색된 character의 이름을 가져온다
     character_name = character.character_name
     
     # 1. Prompt
-    character_prompt = load_character_prompt(character_name, letter_content)
+    character_prompt = load_character_prompt(character_name, letter_content, user_name, user_nickname)
 
     # Include historical letters in the prompt
-    final_prompt = f"Chat History:\n{previous_letters_str}\n\n" + character_prompt 
+    final_prompt = f"#Chat History:\n{previous_letters_str}\n\n" + character_prompt 
     
     prompt = PromptTemplate.from_template(final_prompt)
 
@@ -241,6 +276,12 @@ def write_letter_history(letter_send: Letter):
         letter_receiving.reception_status = "receiving"
         letter_receiving.letter_content = response
         letter_receiving.created_time = datetime.now()
+        
+        ## Calculate the total words in the response -> estimate tokens
+        total_words = len(response.split() + final_prompt.split())
+        print(f"\nTotal words: {total_words}")
+        
+
 
         return letter_receiving
 
