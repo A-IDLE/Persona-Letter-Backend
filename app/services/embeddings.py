@@ -11,7 +11,7 @@ import os
 from app.utils.utils import load_pdf, load_txt, identify_path
 from app.services.vector_database import load_vector_db, pinecone_upsert
 from app.models.models import Letter
-from app.services.letter.generate import advanced_preprocessing_by_llm
+from app.utils.utils import advanced_preprocessing_by_llm
 
 
 def embedding_data(data):
@@ -245,40 +245,40 @@ def text_to_vector(texts):
 
 
 def embed_letter_pinecone_test(letter: Letter):
-    # # Initialize the text splitter
-    # splitter = RecursiveCharacterTextSplitter(
-    #     chunk_size=250, chunk_overlap=0, length_function=len, separators=["\n", ". "])
+    
+    letter_content = letter.letter_content
+    
+    print("this is embed_letter_pinecone_test")
+    print(letter_content)
+    print("\n\n")
+    
+    splitted_texts = advanced_preprocessing_by_llm(letter_content)
 
-    # # Split the document
-    # split_texts = splitter.split_text(letter.letter_content)
-    # print(
-    #     f"\n\n embed_letter_pinecone SPLIT DOCS total documents: {len(split_texts)}\n\n")
+    # Convert split documents to vectors
+    vector_data = []
+    namespace = f"{letter.user_id}_{letter.character_id}"
+    # Get embeddings for all texts at once
+    embeddings = text_to_vector(splitted_texts)
+    print(
+        f"text_to_vector function completed for {len(embeddings['data'])} documents.")
 
-    # # Convert split documents to vectors
-    # vector_data = []
-    # namespace = f"{letter.user_id}_{letter.character_id}"
-    # # Get embeddings for all texts at once
-    # embeddings = text_to_vector(split_texts)
-    # print(
-    #     f"text_to_vector function completed for {len(embeddings['data'])} documents.")
+    for idx, (text, vector) in enumerate(zip(splitted_texts, embeddings['data'])):
+        vector_entry = {
+            "id": f"{letter.letter_id}_{idx}",  # Creating a composite ID
+            "values": vector['embedding'],
+            "metadata": {
+                "letter_id": letter.letter_id,
+                "character_id": letter.character_id,
+                "user_id": letter.user_id,
+                "reception_status": letter.reception_status,
+                "created_time": letter.created_time,
+                "text": text,
+            },
+        }
+        vector_data.append(vector_entry)
 
-    # for idx, (text, vector) in enumerate(zip(split_texts, embeddings['data'])):
-    #     vector_entry = {
-    #         "id": f"{letter.letter_id}_{idx}",  # Creating a composite ID
-    #         "values": vector['embedding'],
-    #         "metadata": {
-    #             "letter_id": letter.letter_id,
-    #             "character_id": letter.character_id,
-    #             "user_id": letter.user_id,
-    #             "reception_status": letter.reception_status,
-    #             "created_time": letter.created_time,
-    #             "text": text,
-    #         },
-    #     }
-    #     vector_data.append(vector_entry)
-
-    # # upsert vector data into the Pinecone index
-    # response = pinecone_upsert(vector_data, namespace)
+    # upsert vector data into the Pinecone index
+    response = pinecone_upsert(vector_data, namespace)
 
     letter_content = letter.letter_content
 
