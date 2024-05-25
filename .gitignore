@@ -6,11 +6,11 @@ cache/
 app/database/vectorDB/DB_INDEX.faiss
 app/database/vectorDB/DB_INDEX.pkl
 
-database/
+
 
 __pycache__/
 
 *.pyc
 
 serviceAccountKey.json
-googleOauthKey.json
+googleOauthKey.json 
