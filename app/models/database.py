@@ -17,14 +17,14 @@ from .base import Base
 load_dotenv()
 
 # Retrieve values from environment variables
-print("COME ON BABY")
+# print("COME ON BABY")
 user = os.getenv('user')
 password = os.getenv('password')
 host = os.getenv('host')
 db_name = os.getenv('db_name')
 
-print(user)
-print(db_name)
+# print(user)
+# print(db_name)
 
 
 DB_URL = f"mysql+pymysql://{user}:{password}@{host}:3306/{db_name}"

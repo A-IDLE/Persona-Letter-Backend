@@ -173,8 +173,6 @@ def write_letter_update(letter_send: Letter) -> Letter:
         # retrieve related information
         related_letters = retrieve_through_letter_update(questions, user_id, character_id)
         refined_retrieved_info = refining_retrieved_info(related_letters, letter_content)
-        language_prompt = verfiy_language(letter_content)
-        print(f"\n this is language prompt\n\n{language_prompt}") # 로그 추가
         
         added_prompt = (f"""\n\n## REFERENCE INFO\n{refined_retrieved_info}""")
 

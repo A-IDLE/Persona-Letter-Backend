@@ -53,7 +53,7 @@ fastapi_app.add_middleware(
 
 # Initialize the database
 init_db()  
-init_vectorDB()
+# init_vectorDB()
 
 # Mount the router
 fastapi_app.include_router(router)
