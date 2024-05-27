@@ -26,6 +26,7 @@ def sqs_message(letter:Letter) -> None:
     try:
         letter_content = letter.letter_content
         letter_id = letter.letter_id
+        character_id = letter.character_id
         character_name = get_character_by_id(letter.character_id).character_name 
         generated_keywords = image_questions(letter_content)
         keywords = f"{character_name}, {generated_keywords}"
@@ -37,6 +38,7 @@ def sqs_message(letter:Letter) -> None:
         message = {
             'keywords': keywords,
             'letter_id': letter_id,
+            'character_id': character_id,
             'prompt_text': prompt_text
         }
         message = json.dumps(message) # JSON 형식으로 변환
