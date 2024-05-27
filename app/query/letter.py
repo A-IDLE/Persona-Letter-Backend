@@ -106,4 +106,19 @@ def get_letters_by_reception_status(user_id: int, character_id: int, reception_s
         print("삐빅에러",e)  # 오류가 발생하면 오류 메시지를 출력합니다.
         return None
     
-    
+def delete_letter_by_userId_and_characterId(user_id: int, character_id: int):  
+    try:
+        with SessionLocal() as session:
+            letters = session.query(Letter).filter(Letter.user_id == user_id, Letter.character_id == character_id).all()
+            
+            if letters:
+                for letter in letters:
+                    session.delete(letter)
+                session.commit()
+                
+                text = f"Deleted {len(letters)} letter(s)"
+                return text
+            else:
+                return "Letter not found."
+    except Exception as e:
+        return f"Error deleting the letter: {str(e)}"

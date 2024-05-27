@@ -8,7 +8,6 @@ cache/
 app/database/vectorDB/DB_INDEX.faiss
 app/database/vectorDB/DB_INDEX.pkl
 
-app/database/
 
 __pycache__/
 

@@ -3,8 +3,12 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.retrievers import EnsembleRetriever
 from app.utils.utils import load_pdf, load_txt
 from app.services.embeddings import text_to_vector
-from app.services.vector_database import load_vector_db, pinecone_init
+from app.services.vector_database import load_vector_db
+from app.services.pinecone import pinecone_init
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
 
 def load_faiss_retriever():
@@ -214,3 +218,78 @@ def fetch_relevant_contexts_test(user_id, character_id, question_embedding, top_
     print(f"Retrieved {len(contexts)} contexts.")
 
     return contexts
+
+
+class PineconeRetriever:
+    def __init__(self, top_k:int = 5):
+        self.index = pinecone_init()
+        self.top_k = top_k
+        
+        
+    def retrieve(self, user_id: int, character_id: int, questions: [str], top_k: int = None):
+        """
+        Retrieve relevant contexts for specific user and character based on given questions.
+
+        Args:
+            user_id (int): User ID
+            character_id (int): Character ID
+            questions ([str]): List of questions
+            top_k (int): Number of top results to fetch
+
+        Returns:
+            list: List of relevant contexts
+        """
+        
+        ## If top_k is not provided, use the default value
+        if not top_k:
+            top_k = self.top_k
+        
+        contexts = []
+
+        for question in questions:
+            embedding_response = text_to_vector(question)
+            if not embedding_response.get('data'):
+                raise ValueError("Failed to generate embedding for the question.")
+            
+            question_embedding = embedding_response['data'][0]['embedding']
+            retrieved_contexts = self.fetch_relevant_contexts(user_id, character_id, question_embedding, top_k)
+            contexts.extend(retrieved_contexts)
+            
+        return contexts
+
+    def fetch_relevant_contexts(self, user_id, character_id, question_embedding, top_k):
+        """
+        Helper function to fetch relevant contexts with retries.
+
+        Args:
+            user_id (int): User ID
+            character_id (int): Character ID
+            question_embedding (list): Embedding of the question
+            top_k (int): Number of top results to fetch
+
+        Returns:
+            list: List of retrieved contexts
+        """
+        namespace = f"{user_id}_{character_id}"
+        contexts = []
+
+        print("Fetching relevant contexts...")
+
+        response = self.index.query(
+                namespace=namespace,
+                vector=question_embedding,
+                top_k=top_k,
+                include_values=True,
+                include_metadata=True
+                )
+        
+        if not response.get('matches'):
+            print("No matches found.")
+            return contexts
+
+        contexts.extend([match['metadata']['text'] for match in response['matches']])
+        print(f"Retrieved {len(contexts)} contexts.")
+
+        return contexts
+
+

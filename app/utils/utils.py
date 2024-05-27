@@ -4,7 +4,12 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import TextLoader
 from fastapi import Request
 from app.query.user import get_user_by_email
-
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.prompts import PromptTemplate
+from app.services.prompt import load_prompt
+from app.services.model import LLM
+import re
 
 ###### LOADER
 
@@ -81,6 +86,20 @@ def load_prompt(file_name):
         print("Error has Occured")
         pass
     
+###### PROMPT LOADER
+def load_prompt_test(file_name):
+    
+    root_path = "app/services/prompt/"
+    full_path = root_path+file_name+".md"
+    
+    try:
+        with open(full_path, 'r', encoding='utf-8') as file:
+            data = file.read()
+        return data
+    except Exception as e:
+        print("Error has Occured")
+        pass
+    
 
 def document_to_string(doc):
     return f"Document content: {doc.page_content}"
@@ -100,3 +119,46 @@ def get_email_from_request(request:Request):
     email = request.state.user.get("email")
     
     return email
+
+def advanced_preprocessing_by_llm(letter_content: str):
+
+    full_path = "preprocessing_0.2"
+    prompt_text = load_prompt_test(full_path)
+    prompt = PromptTemplate.from_template(prompt_text)
+
+    # 2. LLM
+    llm = LLM(max_tokens=2000)
+
+    # 3. Chain
+    chain = (
+        {"letter_content": RunnablePassthrough()}
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
+
+    try:
+
+        response = chain.invoke(letter_content)
+        chunks  = extract_chunks(response)
+
+        return chunks
+
+    except Exception as e:
+        ("An error occurred: " + str(e))
+        pass
+    
+    
+# Function to extract chunks from the input text
+def extract_chunks(input_text):
+    # Find all chunks using regular expressions
+    chunks_data = re.findall(r'\[Chunk \d+\]\n\n(.+?)(?=\n\n\[Chunk \d+\]|\Z)', input_text, re.S)
+
+    # Initialize an empty list to store the chunks
+    chunks = []
+
+    # Append each chunk to the list, stripping any leading/trailing whitespace
+    for chunk in chunks_data:
+        chunks.append(chunk.strip())
+
+    return chunks

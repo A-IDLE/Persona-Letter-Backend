@@ -1,4 +1,8 @@
+# Ensure the top-level project directory is in the Python path
 import os
+import sys
+sys.path.insert(0, os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '..')))
 
 # Add the root directory of the project to sys.path
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -6,6 +10,8 @@ from app.models.models import Letter
 from app.services.letter.write import write_letter
 from app.services.letter.save import save_letter
 from app.query.character import get_character_by_id
+from app.services.vector_database import pinecone_delete_namespace
+from app.models.database import get_db
 
 
 # Define the path of the letter directory
@@ -60,7 +66,16 @@ def replace_text_in_file():
         # Write the modified content back to the file
         with open(file_path, 'w') as file:
             file.write(content)
-
+            
+            
+def delete_user_letters_from_pinecone():
+    
+    user_id = 123
+    character_id = 2
+    response = pinecone_delete_namespace(user_id, character_id)
+    print(response)
+    
+    return response
 
             
 def make_test_data():
@@ -69,7 +84,7 @@ def make_test_data():
     character_id = 2
     character_name = get_character_by_id(character_id).character_name 
     
-    letter_dir = os.path.join(os.path.dirname(__file__),"test","data","letter")
+    letter_dir = os.path.join(os.path.dirname(__file__),"data","letter")
     
      # Define the replacements
     replacements = {
@@ -95,11 +110,20 @@ def make_test_data():
         new_letter.letter_content = content
         new_letter.reception_status = "sending"
         
-        received_letter = write_letter(new_letter)
+        db =get_db()
+        
+        received_letter = write_letter(new_letter, db)
+        
+        
+        print("saving process start")
         
         save_letter(new_letter)
         save_letter(received_letter)
         
         
+        print("process done")
+        
+        
 if __name__ == "__main__":
     make_test_data()
+    # delete_user_letters_from_pinecone()
