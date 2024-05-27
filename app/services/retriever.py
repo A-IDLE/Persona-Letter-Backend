@@ -5,7 +5,10 @@ from app.utils.utils import load_pdf, load_txt
 from app.services.embeddings import text_to_vector
 from app.services.vector_database import load_vector_db
 from app.services.pinecone import pinecone_init
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
 
 def load_faiss_retriever():
@@ -218,7 +221,7 @@ def fetch_relevant_contexts_test(user_id, character_id, question_embedding, top_
 
 
 class PineconeRetriever:
-    def __init__(self, top_k:int = 3):
+    def __init__(self, top_k:int = 5):
         self.index = pinecone_init()
         self.top_k = top_k
         

@@ -8,14 +8,28 @@ from app.services.embeddings import text_to_vector
 load_dotenv()
 
 class PineconeDB:
-    def __init__(self,index_name = os.getenv('PINECONE_INDEX_NAME'), pinecone_api_key = os.getenv('PINECONE_API_KEY')):
+    
+    def __init__(
+        self,
+        index_name = os.getenv('PINECONE_INDEX_NAME'), 
+        pinecone_api_key = os.getenv('PINECONE_API_KEY')
+    ):
+        """_summary_
+
+        Args:
+            index_name (_type_, optional): _description_. Defaults to os.getenv('PINECONE_INDEX_NAME').
+            pinecone_api_key (_type_, optional): _description_. Defaults to os.getenv('PINECONE_API_KEY').
+        """
+        
         self.index_name = index_name
         self.pinecone_api_key = pinecone_api_key
         self.index = self.pinecone_init()
         
     def pinecone_init(self):
+        
         api_key = self.pinecone_api_key
         index_name = self.index_name
+        
         if not all([api_key, index_name]):
             raise ValueError("Missing environment variables. Ensure PINECONE_API_KEY, PINECONE_INDEX_NAME, EMBEDDING_MODEL, and OPENAI_API_KEY are set.")
         try:
@@ -26,7 +40,11 @@ class PineconeDB:
             print(f"An error occurred while initializing the Pinecone index: {e}")
             return None
         
-    def delete_namespace(self, user_id: int, character_id: int):
+    def delete_namespace(
+        self, 
+        user_id: int, 
+        character_id: int
+    ):
         """_summary_
 
         Args:
@@ -35,7 +53,7 @@ class PineconeDB:
 
         Returns:
             _type_: _description_
-        """
+        """ 
         
         namespace = f"{user_id}_{character_id}"
 
@@ -48,7 +66,10 @@ class PineconeDB:
             print(f"An error occurred while deleting the namespace: {e}")
             return None
         
-    def upsert_letter(self, letter: Letter):
+    def upsert_letter(
+        self,
+        letter: Letter
+    ):
 
         letter_content = letter.letter_content
         

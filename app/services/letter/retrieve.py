@@ -2,10 +2,17 @@ import json
 from requests import Session
 from .generate import generate_questions
 from app.services.retriever import get_pinecone_retriever, get_pinecone_retriever_test, PineconeRetriever
+from typing import List, Dict
+from app.services.letter.generate import refining_retrieved_info
 
-def retrieve_letter(user_id, character_id, questions):
+def retrieve_letter(
+    user_id:int, 
+    character_id:int, 
+    questions:List[Dict],
+    top_k:int =5
+):
     
-    retriever = PineconeRetriever()
+    retriever = PineconeRetriever(top_k=top_k)
     letters = retriever.retrieve(user_id, character_id, questions)
     
     # letters = get_pinecone_retriever(user_id, character_id, questions)
@@ -23,7 +30,7 @@ def retrieve_letter_test(questions, user_id, character_id, top_k):
     return letters
 
 
-def retrieve_through_letter_update(letter_content:str, user_id:int, character_id:int) -> str:
+def retrieve_through_letter_update(generated_questions:str, user_id:int, character_id:int) -> str:
     """_summary_
 
     Args:
@@ -32,14 +39,21 @@ def retrieve_through_letter_update(letter_content:str, user_id:int, character_id
         character_id (int): _description_
 
     Returns:
-        str: str of list of related letters
+        str: _description_
     """
     
-    generated_questions = generate_questions(letter_content)
+    # convert generated questions to list
     questions = json.loads(generated_questions)
-    retriever = PineconeRetriever()
-    related_letters = retriever.retrieve(user_id, character_id, questions)
-    related_letters_str = "".join(f"- {related_letter}\n"for related_letter in related_letters)
+    
+    # Initialize retriever
+    retriever = PineconeRetriever(top_k=3)
+    
+    # retrieve related information
+    retrieved_info_list = retriever.retrieve(user_id, character_id, questions)
+    retrieved_info_str = "".join(f"- {retrieved_info}\n"for retrieved_info in retrieved_info_list)
+    
+    # refine retrieved information with generated questions and retrieved information
+    refined_retrieved_info = refining_retrieved_info(generated_questions, retrieved_info_str)
 
-    return related_letters_str
+    return refined_retrieved_info
 

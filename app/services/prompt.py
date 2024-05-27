@@ -9,11 +9,7 @@ from app.query.character import get_character_by_name
 def load_prompt(file_name):
     
     root_path = "app/services/prompt/"
-    full_path = root_path+file_name+".md"
-    
-    print("loading prompt")
-    print(full_path)
-    
+    full_path = root_path+file_name+".md"    
     
     try:
         with open(full_path, 'r', encoding='utf-8') as file:
@@ -23,6 +19,12 @@ def load_prompt(file_name):
         print("Error has Occured")
         print(e)
         pass
+    
+def load_prompt_file(file_name:str) -> PromptTemplate:
+    prompt_text = load_prompt(file_name)
+    prompt = PromptTemplate.from_template(prompt_text)
+    
+    return prompt
 
 
 def get_character_info(character):
@@ -51,7 +53,13 @@ def get_character_info(character):
     return result
 
 
-def load_character_prompt(character_name, letter_content, user_name, user_nickname):
+def load_character_prompt(
+    character_name: str, 
+    letter_content: str, 
+    user_name: str, 
+    user_nickname: str,
+    prompt_file: str = "form_0.2"
+):
     
     character = get_character_by_name(character_name)
     
@@ -68,19 +76,9 @@ def load_character_prompt(character_name, letter_content, user_name, user_nickna
         'letter':  letter_content,
         'user_name': user_name,
         'user_nickname': user_nickname
-
     }
 
-    # base_prompt = load_prompt("hermione_markdown_0.3.1")
-    base_prompt = load_prompt("form_0.2")
-
+    base_prompt = load_prompt(prompt_file)
     final_prompt = base_prompt.format(**prompt_inputs)
     
-    return final_prompt
-    
-    
-
-
-
-
-    
+    return final_prompt  
