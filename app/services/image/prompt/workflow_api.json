@@ -1,7 +1,7 @@
 {
   "3": {
     "inputs": {
-      "seed": 1631591050,
+      "seed": 643623062787170,
       "steps": 30,
       "cfg": 4.5,
       "sampler_name": "ddpm",
@@ -76,7 +76,7 @@
   },
   "13": {
     "inputs": {
-      "image": "2.jpg",
+      "image": "4.jpg",
       "upload": "image"
     },
     "class_type": "LoadImage",
@@ -104,7 +104,7 @@
   },
   "39": {
     "inputs": {
-      "text": "(masterpiece, best quality), abstract and colorful paint style,3DMM, solo, detailed background, detailed face",
+      "text": "solo,detailed face, This isn't just a photograph; it's a moment of raw emotion, frozen in time, inviting the viewer to not just see, but to feel.",
       "clip": [
         "4",
         1
@@ -117,7 +117,7 @@
   },
   "40": {
     "inputs": {
-      "text": "letter, watermark, photograph, deformed, glitch, noisy, stock photo",
+      "text": "watermark, letter ,photograph, deformed, glitch, noisy, stock photo, Photo Frame",
       "clip": [
         "4",
         1
@@ -146,7 +146,7 @@
         0
       ],
       "image": [
-        "13",
+        "82",
         0
       ],
       "model": [
@@ -199,23 +199,10 @@
       "title": "Preview Image"
     }
   },
-  "70": {
-    "inputs": {
-      "filename_prefix": "ComfyUI",
-      "images": [
-        "8",
-        0
-      ]
-    },
-    "class_type": "SaveImage",
-    "_meta": {
-      "title": "Save Image"
-    }
-  },
   "71": {
     "inputs": {
-      "seed": 116418740140648,
-      "steps": 10,
+      "seed": 866626884276946,
+      "steps": 9,
       "cfg": 8,
       "sampler_name": "euler",
       "scheduler": "normal",
@@ -281,16 +268,65 @@
       "title": "Empty Latent Image"
     }
   },
-  "75": {
+  "76": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "SaveImageWithS3Upload",
+    "_meta": {
+      "title": "Save Image With S3 Upload"
+    }
+  },
+  "82": {
+    "inputs": {
+      "action": "crop to ratio",
+      "smaller_side": 0,
+      "larger_side": 768,
+      "scale_factor": 0,
+      "resize_mode": "reduce size only",
+      "side_ratio": "4:3",
+      "crop_pad_position": 0.5,
+      "pad_feathering": 20,
+      "pixels": [
+        "13",
+        0
+      ],
+      "mask_optional": [
+        "13",
+        1
+      ]
+    },
+    "class_type": "ImageResize",
+    "_meta": {
+      "title": "Image Resize"
+    }
+  },
+  "83": {
     "inputs": {
       "images": [
         "8",
         0
       ]
     },
-    "class_type": "SaveImageWebsocket",
+    "class_type": "PreviewImage",
     "_meta": {
-      "title": "SaveImageWebsocket"
+      "title": "Preview Image"
+    }
+  },
+  "84": {
+    "inputs": {
+      "images": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
     }
   }
 }
