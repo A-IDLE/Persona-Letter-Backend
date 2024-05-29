@@ -58,7 +58,8 @@ def load_character_prompt(
     letter_content: str, 
     user_name: str, 
     user_nickname: str,
-    prompt_file: str = "form_0.2"
+    # prompt_file: str = "form_0.2"
+    prompt_file: str = "hermione_markdown_0.3.1"
 ):
     
     character = get_character_by_name(character_name)
