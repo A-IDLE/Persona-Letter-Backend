@@ -30,7 +30,7 @@ def sqs_message(letter:Letter) -> None:
         character_name = get_character_by_id(letter.character_id).character_name 
         generated_keywords = image_questions(letter_content)
         keywords = f"{character_name}, {generated_keywords}"
-        json_file_path = 'app/services/image/prompt/workflow_api.json' # 적용하고 싶은 ComfyUI 프롬프트 JSON 파일 경로
+        json_file_path = 'app/services/image/prompt/inji_without_detailer5.json' # 적용하고 싶은 ComfyUI 프롬프트 JSON 파일 경로
         with open(json_file_path, 'r') as file:
             prompt_text = json.load(file)
         print(f"sqs_message keywords : {keywords}")
