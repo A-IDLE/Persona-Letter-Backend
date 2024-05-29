@@ -6,8 +6,8 @@ from langchain_core.prompts import PromptTemplate
 def image_questions(letter):
 
     prompt_text = """
-        You are an AI assistant tasked with using a given format to find keywords for a single image that is associated with a given context.
-        Please answer in format only and only English, excluding other content. Find at least 3 keywords and no more than 10 keywords.
+        You are an AI assistant tasked with using a given format to find keywords for a scene that is associated with a given context.
+        Please answer in format only and only English, excluding other content. Find at least 3 keywords and no more than 10 keywords. Keywords never include a person's name.
         #question:
         {question}
         

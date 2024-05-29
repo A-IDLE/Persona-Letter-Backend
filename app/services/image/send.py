@@ -33,7 +33,7 @@ def sqs_message(letter:Letter) -> None:
         json_file_path = 'app/services/image/prompt/workflow_api.json' # 적용하고 싶은 ComfyUI 프롬프트 JSON 파일 경로
         with open(json_file_path, 'r') as file:
             prompt_text = json.load(file)
-        print(f"sqs_message keywords : {keywords}")
+        print(f"\nsqs_message keywords : {keywords}")
         print(f"\nsqs_message letter_id : {letter_id}")
         message = {
             'keywords': keywords,
