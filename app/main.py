@@ -16,7 +16,6 @@ from app.api.endpoints.letter_router import router
 from app.api.endpoints.character_router import router as router_character
 from app.auth.auth import router as router_auth
 # from api.router import router
-from fastapi.middleware.cors import CORSMiddleware
 from app.models.database import init_db
 from app.models import *
 from app.services.others.setup import character_setup_by_names
@@ -65,15 +64,6 @@ fastapi_app.include_router(router_mail)
 
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
-
-# Set up CORS middleware configuration
-fastapi_app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # List the origins that should be allowed, use ["*"] for all origins
-    allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
-)
 
 
 # characters_names = [
