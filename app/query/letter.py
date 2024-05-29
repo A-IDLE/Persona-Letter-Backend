@@ -30,6 +30,16 @@ def get_received_letter(letter_id: int, db: Session):
     except Exception as e:
         return f"Error getting received letter: {str(e)}"
     
+def get_sent_letter(letter_id: int, db: Session):
+    try:
+        letter = db.query(Letter).filter(
+            Letter.letter_id == letter_id,
+            Letter.reception_status == 'sending'
+        ).first()
+        return letter
+    except Exception as e:
+        return f"Error getting received letter: {str(e)}"
+    
 def get_letters_by_character_id(user_id: int, character_id: int):
     try:
         with SessionLocal() as session:
