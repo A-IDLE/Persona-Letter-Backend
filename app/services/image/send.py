@@ -5,9 +5,9 @@ import os
 from dotenv import load_dotenv
 from requests import Session
 
-from query.character import get_character_by_id
-from models.models import Letter
-from services.image.generate import image_questions
+from app.query.character import get_character_by_id
+from app.models.models import Letter
+from app.services.image.generate import image_questions
 
 load_dotenv()
 

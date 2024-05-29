@@ -1,4 +1,4 @@
-from services.model import load_model
+from app.services.model import load_model
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.prompts import PromptTemplate
