@@ -10,6 +10,7 @@ from app.services.letter.save import save_letter
 from app.query.letter import Letter
 from app.query.letter import get_a_letter
 from app.query.letter import get_received_letter as query_get_received_letter
+from app.query.letter import get_sent_letter as query_get_sent_letter
 
 
 def create_letter(letter: LetterDto, db: Session):
@@ -60,6 +61,9 @@ def get_a_letter(letter_id: int, db: Session):
 
 def get_received_letter(letter_id: int, db: Session):
     return query_get_received_letter(letter_id, db)
+
+def get_sent_letter(letter_id: int, db: Session):
+    return query_get_sent_letter(letter_id, db)
 
 def create_letter_update(letter: LetterDto):
     
