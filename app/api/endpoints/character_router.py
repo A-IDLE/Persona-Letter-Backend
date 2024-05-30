@@ -5,7 +5,7 @@ from app.models.database import get_db
 from app.models.models import Character
 from app.services.character_service import get_characters
 
-router = APIRouter()
+router = APIRouter(prefix="/api")
 
 @router.get("/characters")
 def getCharacters():
