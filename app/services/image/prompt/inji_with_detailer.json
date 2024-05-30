@@ -23,7 +23,7 @@
   },
   "3": {
     "inputs": {
-      "text": "ermione, <lora:Hermione Granger2:0.8>, <lora:EmmaWatson:0.75>, 1girl, brown eyes, digital painting, bushy brown hair, brown eyes, masterpiece, 8k, perfect artwork, ray tracing",
+      "text": "Hermione Granger, 1 girl, digital painting, bushy brown hair, brown eyes, white shirt, masterpiece, 8k, perfect artwork, ray tracing, upper body, close up, <lora:EmmaWatson:0.8>, <lora:Hermione Granger2:0.2>",
       "clip": [
         "16",
         1
@@ -36,7 +36,7 @@
   },
   "4": {
     "inputs": {
-      "text": "nsfw, (worst quality:1.2), (low quality:1.2), text, signature, watermark, (lowres:1.1), (monochrome:1.1), (greyscale),deformed, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, disgusting, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, doubled face, mutated hands,mutated fingers, multiple eyebrows, bad feet, bad leg, ((extra feet)), ((extra legs)), extra fingers, extra breast, watermark, username, signature, logo, multiple views, sketch, child, child face, midriff, abs, beard, facial hair, badhandsv5-neg, EasyNegative",
+      "text": "nsfw, (worst quality:1.2), (low quality:1.2), (lowres:1.1), (monochrome:1.1), text, signature, watermark, (greyscale),deformed, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, disgusting, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, doubled face, mutated hands,mutated fingers, multiple eyebrows, bad feet, bad leg, ((extra feet)), ((extra legs)), extra fingers, extra breast, watermark, username, signature, logo, multiple views, sketch, child, child face, midriff, abs, beard, facial hair, badhandsv5-neg, EasyNegative",
       "clip": [
         "16",
         1
@@ -49,7 +49,7 @@
   },
   "5": {
     "inputs": {
-      "seed": 201013139309507,
+      "seed": 21405619743647,
       "steps": 30,
       "cfg": 7,
       "sampler_name": "dpmpp_2m",
@@ -190,7 +190,7 @@
   },
   "15": {
     "inputs": {
-      "seed": 415242878603566,
+      "seed": 1008726402803123,
       "steps": 30,
       "cfg": 7,
       "sampler_name": "dpmpp_2m",
@@ -220,7 +220,7 @@
   },
   "16": {
     "inputs": {
-      "lora_name": "Hermione Granger2.safetensors",
+      "lora_name": "EmmaWatson.safetensors",
       "strength_model": 1,
       "strength_clip": 1,
       "model": [
@@ -239,7 +239,7 @@
   },
   "17": {
     "inputs": {
-      "lora_name": "EmmaWatson.safetensors",
+      "lora_name": "Hermione Granger2.safetensors",
       "strength_model": 1,
       "strength_clip": 1,
       "model": [
@@ -256,11 +256,122 @@
       "title": "Load LoRA"
     }
   },
+  "18": {
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "clip": [
+        "1",
+        1
+      ],
+      "vae": [
+        "1",
+        2
+      ],
+      "positive": [
+        "3",
+        0
+      ],
+      "negative": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "ToBasicPipe",
+    "_meta": {
+      "title": "ToBasicPipe"
+    }
+  },
+  "19": {
+    "inputs": {
+      "basic_pipe": [
+        "18",
+        0
+      ]
+    },
+    "class_type": "FromBasicPipe",
+    "_meta": {
+      "title": "FromBasicPipe"
+    }
+  },
+  "20": {
+    "inputs": {
+      "guide_size": 384,
+      "guide_size_for": true,
+      "max_size": 1024,
+      "seed": 133725014658585,
+      "steps": 999,
+      "cfg": 8,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 0.5,
+      "feather": 5,
+      "noise_mask": true,
+      "force_inpaint": true,
+      "bbox_threshold": 0.5,
+      "bbox_dilation": 10,
+      "bbox_crop_factor": 3,
+      "sam_detection_hint": "center-1",
+      "sam_dilation": 0,
+      "sam_threshold": 0.93,
+      "sam_bbox_expansion": 0,
+      "sam_mask_hint_threshold": 0.7,
+      "sam_mask_hint_use_negative": "False",
+      "drop_size": 10,
+      "wildcard": "",
+      "cycle": 1,
+      "inpaint_model": false,
+      "noise_mask_feather": 20,
+      "image": [
+        "7",
+        0
+      ],
+      "model": [
+        "19",
+        0
+      ],
+      "clip": [
+        "19",
+        1
+      ],
+      "vae": [
+        "19",
+        2
+      ],
+      "positive": [
+        "19",
+        3
+      ],
+      "negative": [
+        "19",
+        4
+      ],
+      "bbox_detector": [
+        "21",
+        0
+      ]
+    },
+    "class_type": "FaceDetailer",
+    "_meta": {
+      "title": "FaceDetailer"
+    }
+  },
+  "21": {
+    "inputs": {
+      "model_name": "bbox/face_yolov8m.pt"
+    },
+    "class_type": "UltralyticsDetectorProvider",
+    "_meta": {
+      "title": "UltralyticsDetectorProvider"
+    }
+  },
   "22": {
     "inputs": {
       "filename_prefix": "ComfyUI",
       "images": [
-        "7",
+        "20",
         0
       ]
     },
