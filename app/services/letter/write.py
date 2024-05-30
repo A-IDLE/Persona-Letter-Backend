@@ -129,7 +129,7 @@ def write_letter_update(letter_send: Letter) -> Letter:
     # LANGUAGE PROMPT
     language_prompt = verfiy_language(letter_content)
     
-    # CHARACTER PROMPT
+    # CHARACTER PROMPT 
     # character_id를 통해서 character 찾는다
     character = get_character_by_id(letter_send.character_id)
     # 검색된 character의 이름을 가져온다

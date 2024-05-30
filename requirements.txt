@@ -17,4 +17,5 @@ google-auth-oauthlib
 google-auth-httplib2 
 google-api-python-client
 pinecone
+boto3
 ## python -m spacy download en_core_web_sm
