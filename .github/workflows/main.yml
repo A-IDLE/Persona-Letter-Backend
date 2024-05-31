@@ -22,7 +22,7 @@ jobs:
     - name: Deploy to AWS EC2
       shell: bash
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<'EOF'
+        ssh -o StrictHostKeyChecking=no -t ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<'EOF'
         
           # Kill existing uvicorn process
           pkill uvicorn || true
