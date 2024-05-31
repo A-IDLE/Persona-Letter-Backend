@@ -19,14 +19,37 @@ jobs:
     - name: Deploy to AWS EC2
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<EOF
-          pkill uvicorn
+          # Kill existing uvicorn process
+          pkill uvicorn || true
+
+          # Navigate to the directory and remove existing repo
           cd ~/Persona_Letter
           sudo rm -r ~/Persona_Letter/Persona-Letter-Backend/
+
+          # Clone the repository
           git clone https://github.com/A-IDLE/Persona-Letter-Backend.git
+
+          # Navigate to the backend directory
           cd ~/Persona_Letter/Persona-Letter-Backend/
+
+          # Check if the Conda environment exists
+          if conda env list | grep -q 'persona_env'; then
+            echo "Conda environment persona_env already exists"
+          else
+            # Create the Conda environment if it doesn't exist
+            conda create -n persona_env python=3.10 -y
+          fi
+
+          # Activate the Conda environment
+          source activate persona_env
+
+          # Install dependencies
           pip install -r requirements.txt
+
+          # Copy configuration files
           cp ~/Persona_Letter/config/backend/* ~/Persona_Letter/Persona-Letter-Backend/
           cp ~/Persona_Letter/config/backend/.env ~/Persona_Letter/Persona-Letter-Backend/
-          cd ~/Persona_Letter/Persona-Letter-Backend/
+
+          # Start uvicorn
           nohup uvicorn app.main:fastapi_app --host 0.0.0.0 --port 9000 --reload &
         EOF
