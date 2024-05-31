@@ -19,6 +19,27 @@ jobs:
     - name: Deploy to AWS EC2
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<EOF
+
+          # Install Miniconda if not already installed
+          if [ ! -d "$HOME/miniconda" ]; then
+              wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh
+              bash ~/miniconda.sh -b -p $HOME/miniconda
+              export PATH="\$HOME/miniconda/bin:\$PATH"
+              conda init
+              source ~/.bashrc
+          fi
+
+          # Ensure conda is in the path
+          export PATH="\$HOME/miniconda/bin:\$PATH"
+          source ~/.bashrc
+
+          # Create and activate conda environment
+          if ! conda info --envs | grep -q 'myenv'; then
+              conda create -n myenv python=3.8 -y
+          fi
+
+          conda activate myenv
+
           # Kill existing uvicorn process
           pkill uvicorn || true
 
@@ -31,17 +52,6 @@ jobs:
 
           # Navigate to the backend directory
           cd ~/Persona_Letter/Persona-Letter-Backend/
-
-          # Check if the Conda environment exists
-          if conda env list | grep -q 'persona_env'; then
-            echo "Conda environment persona_env already exists"
-          else
-            # Create the Conda environment if it doesn't exist
-            conda create -n persona_env python=3.10 -y
-          fi
-
-          # Activate the Conda environment
-          source activate persona_env
 
           # Install dependencies
           pip install -r requirements.txt
