@@ -24,27 +24,20 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no -t -t ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<'EOF'
         
-          # Kill existing uvicorn process
           pkill uvicorn || true
 
-          # Navigate to the directory and remove existing repo
           cd ~/Persona_Letter
           sudo rm -r ~/Persona_Letter/Persona-Letter-Backend/
 
-          # Clone the repository
           git clone https://github.com/A-IDLE/Persona-Letter-Backend.git
 
-          # Navigate to the backend directory
           cd ~/Persona_Letter/Persona-Letter-Backend/
 
-          # Install dependencies
           pip install -r requirements.txt
 
-          # Copy configuration files
           cp ~/Persona_Letter/config/backend/* ~/Persona_Letter/Persona-Letter-Backend/
           cp ~/Persona_Letter/config/backend/.env ~/Persona_Letter/Persona-Letter-Backend/
 
-          # Start uvicorn
           nohup uvicorn app.main:fastapi_app --host 0.0.0.0 --port 9000 --reload &
           
         EOF
