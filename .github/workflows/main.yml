@@ -23,7 +23,7 @@ jobs:
           cd ~/Persona_Letter
           sudo rm -r ~/Persona_Letter/Persona-Letter-Backend/
           git clone https://github.com/A-IDLE/Persona-Letter-Backend.git
-          cd ~/Person_Letter/Persona-Letter-Backend/
+          cd ~/Persona_Letter/Persona-Letter-Backend/
           pip install -r requirements.txt
           cp ~/Persona_Letter/config/backend/* ~/Persona_Letter/Persona-Letter-Backend/
           cp ~/Persona_Letter/config/backend/.env ~/Persona_Letter/Persona-Letter-Backend/
