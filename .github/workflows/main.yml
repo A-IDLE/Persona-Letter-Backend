@@ -17,9 +17,9 @@ jobs:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: Deploy to AWS EC2
+      shell: bash
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
-          bash -c '
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<'EOF'
         
           # Kill existing uvicorn process
           pkill uvicorn || true
@@ -43,5 +43,5 @@ jobs:
 
           # Start uvicorn
           nohup uvicorn app.main:fastapi_app --host 0.0.0.0 --port 9000 --reload &
-          '
+          
         EOF
