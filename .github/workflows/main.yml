@@ -21,8 +21,8 @@ jobs:
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<EOF
 
         # Ensure conda is in the PATH
-          export PATH="$~/miniconda3/bin:$PATH"
-          source $~/miniconda3/etc/profile.d/conda.sh
+          sudo export PATH="$~/miniconda3/bin:$PATH"
+          sudo source $~/miniconda3/etc/profile.d/conda.sh
         
           # Kill existing uvicorn process
           pkill uvicorn || true
