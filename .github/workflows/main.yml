@@ -27,7 +27,7 @@ jobs:
           pkill uvicorn || true
 
           cd ~/Persona_Letter
-          rm -r ~/Persona_Letter/Persona-Letter-Backend/
+          sudo rm -r ~/Persona_Letter/Persona-Letter-Backend/
 
           git clone https://github.com/A-IDLE/Persona-Letter-Backend.git
 
