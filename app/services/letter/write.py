@@ -72,7 +72,7 @@ def write_letter(letter_send: Letter, db: Session):
 
     # 1. Prompt
     character_prompt = load_character_prompt(
-        character_name, letter_content, user_name, user_nickname)
+        character_name, letter_content, user_name, user_nickname, character_id)
 
     final_prompt = character_prompt + added_prompt + language_prompt
 
@@ -97,6 +97,7 @@ def write_letter(letter_send: Letter, db: Session):
     try:
 
         response = chain.invoke(letter_content)
+        response = response.replace("## ", "").replace("**", "").strip()  # 남은 형식 지침을 정리
 
         # 응답한 메일을 초기화
         letter_receiving = Letter()
@@ -127,9 +128,9 @@ def write_letter_update(letter_send: Letter) -> Letter:
     ambiguous_result = check_ambiguous_questions(questions)
     
     # LANGUAGE PROMPT
-    language_prompt = verfiy_language(letter_content)
+    language_prompt = verfiy_language(letter_content).replace("## Format \nEnglish", "").strip()
     
-    # CHARACTER PROMPT
+    # CHARACTER PROMPT 
     # character_id를 통해서 character 찾는다
     character = get_character_by_id(letter_send.character_id)
     # 검색된 character의 이름을 가져온다
@@ -139,7 +140,7 @@ def write_letter_update(letter_send: Letter) -> Letter:
     user_name = user.user_name if user else 'User'
     user_nickname = user.user_nickname if user else 'User'
 
-    character_prompt = load_character_prompt(character_name, letter_content, user_name, user_nickname)
+    character_prompt = load_character_prompt(character_name, letter_content, user_name, user_nickname, character_id)
     
     # Initialize variables for prompts
     previous_letters_str = ""
@@ -185,7 +186,7 @@ def write_letter_update(letter_send: Letter) -> Letter:
 
 
     # 2. LLM
-    llm = LLM()
+    llm = LLM(temperature=1)
 
     # 3. Chain
     chain = (
@@ -198,6 +199,7 @@ def write_letter_update(letter_send: Letter) -> Letter:
     # 4. Write Mail
     try:
         response = chain.invoke(letter_content)
+        response = response.replace("## ", "").replace("**", "").strip()  # 남은 형식 지침을 정리
 
         # 응답한 메일을 초기화
         letter_receiving = Letter()
@@ -251,7 +253,7 @@ def write_letter_history(letter_send: Letter):
 
     # 1. Prompt
     character_prompt = load_character_prompt(
-        character_name, letter_content, user_name, user_nickname)
+        character_name, letter_content, user_name, user_nickname, character_id)
 
     # Include historical letters in the prompt
     final_prompt = f"#Chat History:\n{previous_letters_str}\n\n" + \
@@ -285,6 +287,8 @@ def write_letter_history(letter_send: Letter):
             print(f"프롬프트에 사용된 토큰수: \t{cb.prompt_tokens}")
             print(f"답변에 사용된 토큰수: \t{cb.completion_tokens}")
             print(f"호출에 청구된 금액(USD): \t${cb.total_cost}")
+
+        response = response.replace("## ", "").replace("**", "").strip()  # 남은 형식 지침을 정리
 
         # 응답한 메일을 초기화
         letter_receiving = Letter()
@@ -339,7 +343,7 @@ def write_letter_test(letter_send: Letter, test: RagTestData):
     character_name = character.character_name
 
     # 1. Prompt
-    character_prompt = load_character_prompt(character_name, letter_content, user_name, user_nickname, prompt_file=test.basic_character_prompt)
+    character_prompt = load_character_prompt(character_name, letter_content, user_name, user_nickname, character_id, prompt_file=test.basic_character_prompt)
     final_prompt = character_prompt + added_prompt + language_prompt
     prompt = PromptTemplate.from_template(final_prompt)
 
@@ -365,6 +369,8 @@ def write_letter_test(letter_send: Letter, test: RagTestData):
             print(f"프롬프트에 사용된 토큰수: \t{cb.prompt_tokens}")
             print(f"답변에 사용된 토큰수: \t{cb.completion_tokens}")
             print(f"호출에 청구된 금액(USD): \t${cb.total_cost}")
+
+        response = response.replace("## ", "").replace("**", "").strip()  # 남은 형식 지침을 정리
 
         # 응답한 메일을 초기화
         letter_receiving = Letter()

@@ -23,7 +23,7 @@
   },
   "3": {
     "inputs": {
-      "text": "Hermione Granger, 1 girl, digital painting, bushy brown hair, brown eyes, white shirt, masterpiece, 8k, perfect artwork, ray tracing, upper body, close up, <lora:EmmaWatson:0.8>, <lora:Hermione Granger2:0.2>",
+      "text": "1 girl, digital painting, daily outfit, bushy brown hair, brown eyes, masterpiece, 8k, perfect artwork, ray tracing, upper body, close up, <lora:EmmaWatson:1.5>",
       "clip": [
         "16",
         1
@@ -230,25 +230,6 @@
       "clip": [
         "17",
         1
-      ]
-    },
-    "class_type": "LoraLoader",
-    "_meta": {
-      "title": "Load LoRA"
-    }
-  },
-  "17": {
-    "inputs": {
-      "lora_name": "Hermione Granger2.safetensors",
-      "strength_model": 1,
-      "strength_clip": 1,
-      "model": [
-        "1",
-        0
-      ],
-      "clip": [
-        "2",
-        0
       ]
     },
     "class_type": "LoraLoader",

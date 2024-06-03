@@ -43,7 +43,7 @@ def rag_test():
     test.chunk_overlap = 0
     test.top_k = 5
     test.filter = ""
-    test.basic_character_prompt = "hermione_markdown_0.3.2"
+    test.basic_character_prompt = "form_0.3"
     test.generate_questions_prompts = "generate_questions_0.5"
     test.generated_questions = ""
     test.refining_retrieved_info_prompt = "refining_info_0.7"

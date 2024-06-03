@@ -8,8 +8,8 @@ def image_questions(letter):
     prompt_text = """
         You are an AI assistant tasked with using a given format to find keywords to visually depict a scene described by a given context.
         Extract only keywords that describe actions, background, attire, and overall appearance of the writer of the {question}.
-        Do not include any keywords that represent abstract concepts such as 'love', 'knowledge', 'bond', 'passion', 'empathy', and so on. 
-        If there are no keywords that can visually describe the scene, include a single random word representing daily life activity.
+        Do not include any keywords that represent abstract concepts such as 'love', 'knowledge', 'bond', 'passion', 'empathy', and so on.
+        Keyword2 must describe an outfit that complements other keywords, such as 'formal outfit', 'rain coat', 'party dress', and so on. 
         Please answer in format only excluding other content, and only in English. 
         Find at least 3 keywords and no more than 10 keywords. 
         Keywords never include a person's name.
