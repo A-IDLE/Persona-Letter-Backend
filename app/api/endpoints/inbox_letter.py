@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.services.inbox_service import get_user_inbox, get_user_outbox
 
-router = APIRouter()
+router = APIRouter(prefix="/api")
 
 @router.get("/inboxLetter")
 def inbox_letters(user_id: int, character_id: int):  # character_id 파라미터 추가

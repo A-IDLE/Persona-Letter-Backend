@@ -1,0 +1,43 @@
+name: Persona Letter Backend CI/CD !
+
+on:
+  # main branch에 푸쉬할 때
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Deploy to AWS EC2
+      shell: bash
+      run: |
+        ssh -o StrictHostKeyChecking=no -t -t ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<'EOF'
+        
+          pkill uvicorn || true
+
+          cd ~/Persona_Letter
+          sudo rm -r ~/Persona_Letter/Persona-Letter-Backend/
+
+          git clone https://github.com/A-IDLE/Persona-Letter-Backend.git
+
+          cd ~/Persona_Letter/Persona-Letter-Backend/
+
+          pip install -r requirements.txt
+
+          cp ~/Persona_Letter/config/backend/* ~/Persona_Letter/Persona-Letter-Backend/
+          cp ~/Persona_Letter/config/backend/.env ~/Persona_Letter/Persona-Letter-Backend/
+
+          nohup uvicorn app.main:fastapi_app --host 0.0.0.0 --port 9000 --reload &
+          
+        EOF

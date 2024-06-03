@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from app.services.auth.auth_service import google_login, update_user_name_after_login, get_user_name, update_user_nickname_after_login
 
 
-router = APIRouter()
+router = APIRouter(prefix="/api")
 
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred)

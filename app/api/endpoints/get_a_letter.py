@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.services.letter_service import get_a_letter, get_received_letter, get_sent_letter
 from app.models.database import get_db
 
-router = APIRouter()
+router = APIRouter(prefix="/api")
 
 @router.get("/getALetter/{letter_id}")
 def getAletter(letter_id: int):

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
-from schemas.schemas import LetterDto
+from app.schemas.schemas import LetterDto
 from app.models.database import get_db
 from app.schemas.schemas import LetterDto
 from app.services.mail.smtp import send_email
@@ -9,7 +9,7 @@ from app.utils.utils import get_user_id_from_request, get_email_from_request
 from app.query.letter import get_letters_by_character_id, get_a_letter, get_letters_by_reception_status, update_letter_read_status
 from app.services.letter.delete import delete_letters
 
-router = APIRouter()
+router = APIRouter(prefix="/api")
 
 
 # @router.post("/writeLetter")

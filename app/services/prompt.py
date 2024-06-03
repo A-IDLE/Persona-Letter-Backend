@@ -58,10 +58,17 @@ def load_character_prompt(
     letter_content: str, 
     user_name: str, 
     user_nickname: str,
-    # prompt_file: str = "form_0.2"
-    prompt_file: str = "hermione_markdown_0.3.1"
+    character_id: int,
+    # prompt_file: str = "form_0.4"
 ):
+    # Determine the prompt file based on character_id
+    if character_id == 2:
+        prompt_file = "hermione_markdown_0.3.2"
+    else:
+        prompt_file = "form_0.4"
     
+    print(f"Loading prompt file: {prompt_file}")
+
     character = get_character_by_name(character_name)
     
     prompt_inputs = {
