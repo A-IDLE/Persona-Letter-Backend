@@ -32,7 +32,7 @@ def sqs_message(letter:Letter) -> None:
         keywords = f"{character_name}, {generated_keywords}"
         json_file_path = 'app/services/image/prompt/workflow_api.json'
         if character_id == 2:
-            json_file_path = 'app/services/image/prompt/inji_with_detailer.json' # 적용하고 싶은 ComfyUI 프롬프트 JSON 파일 경로
+            json_file_path = 'app/services/image/prompt/inji_with_detailer1.json' # 적용하고 싶은 ComfyUI 프롬프트 JSON 파일 경로
         with open(json_file_path, 'r') as file:
             prompt_text = json.load(file)
         print(f"\nsqs_message keywords : {keywords}")

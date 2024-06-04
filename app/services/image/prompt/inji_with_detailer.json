@@ -23,7 +23,7 @@
   },
   "3": {
     "inputs": {
-      "text": "1 girl, digital painting, daily outfit, bushy brown hair, brown eyes, masterpiece, 8k, perfect artwork, ray tracing, upper body, close up, <lora:EmmaWatson:1.5>",
+      "text": "Hermione Granger, 1 girl, digital painting, bushy brown hair, brown eyes, no makeup, masterpiece, 8k, perfect artwork, ray tracing, upper body, close up, <lora:EmmaWatson:0.8>, <lora:Hermione Granger2:0.2>",
       "clip": [
         "16",
         1
@@ -31,7 +31,7 @@
     },
     "class_type": "CLIPTextEncode",
     "_meta": {
-      "title": "Positive"
+      "title": "CLIP Text Encode (Prompt)"
     }
   },
   "4": {
@@ -74,7 +74,7 @@
     },
     "class_type": "KSampler",
     "_meta": {
-      "title": "Sampler"
+      "title": "KSampler"
     }
   },
   "6": {
@@ -215,7 +215,7 @@
     },
     "class_type": "KSampler",
     "_meta": {
-      "title": "Sampler2"
+      "title": "KSampler"
     }
   },
   "16": {
@@ -230,6 +230,25 @@
       "clip": [
         "17",
         1
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "Load LoRA"
+    }
+  },
+  "17": {
+    "inputs": {
+      "lora_name": "Hermione Granger2.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": [
+        "1",
+        0
+      ],
+      "clip": [
+        "2",
+        0
       ]
     },
     "class_type": "LoraLoader",
@@ -350,15 +369,14 @@
   },
   "22": {
     "inputs": {
-      "filename_prefix": "ComfyUI",
       "images": [
         "20",
         0
       ]
     },
-    "class_type": "SaveImageWithS3Upload",
+    "class_type": "SaveImageWebsocket",
     "_meta": {
-      "title": "Save Image With S3 Upload"
+      "title": "SaveImageWebsocket"
     }
   }
 }
