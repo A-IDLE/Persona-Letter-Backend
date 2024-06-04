@@ -6,7 +6,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -14,30 +14,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Setup SSH
-      uses: webfactory/ssh-agent@v0.5.3
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
       with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-northeast-2a
 
-    - name: Deploy to AWS EC2
-      shell: bash
-      run: |
-        ssh -o StrictHostKeyChecking=no -t -t ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<'EOF'
-        
-          pkill uvicorn || true
 
-          cd ~/Persona_Letter
-          sudo rm -r ~/Persona_Letter/Persona-Letter-Backend/
-
-          git clone https://github.com/A-IDLE/Persona-Letter-Backend.git
-
-          cd ~/Persona_Letter/Persona-Letter-Backend/
-
-          pip install -r requirements.txt
-
-          cp ~/Persona_Letter/config/backend/* ~/Persona_Letter/Persona-Letter-Backend/
-          cp ~/Persona_Letter/config/backend/.env ~/Persona_Letter/Persona-Letter-Backend/
-
-          nohup uvicorn app.main:fastapi_app --host 0.0.0.0 --port 9000 --reload &
-          
-        EOF
+    # 실제로 코드를 배포한다.
+    - name: Code Deploy
+      run: aws deploy create-deployment --application-name persona_letter --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name persona_letter_deploy
