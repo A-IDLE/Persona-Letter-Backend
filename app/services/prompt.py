@@ -59,13 +59,13 @@ def load_character_prompt(
     user_name: str, 
     user_nickname: str,
     character_id: int,
-    # prompt_file: str = "form_0.4"
+    prompt_file: str = "form_0.5"
 ):
     # Determine the prompt file based on character_id
     if character_id == 2:
         prompt_file = "hermione_markdown_0.3.2"
     else:
-        prompt_file = "form_0.4"
+        prompt_file = "form_0.5"
     
     print(f"Loading prompt file: {prompt_file}")
 
