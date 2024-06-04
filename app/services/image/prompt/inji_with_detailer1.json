@@ -23,7 +23,7 @@
   },
   "3": {
     "inputs": {
-      "text": "<lora:EmmaWatson:0.75>, 1girl, brown eyes, digital painting, bushy brown hair, brown eyes, masterpiece, 8k, perfect artwork, ray tracing, <lora:harry_potter_v1:0.2>",
+      "text": "1 girl, digital painting, white shirt, long hair, bushy brown hair, brown eyes, masterpiece, 8k, perfect artwork, ray tracing, upper body, close up, <lora:EmmaWatson:1.5>",
       "clip": [
         "16",
         1
@@ -36,7 +36,7 @@
   },
   "4": {
     "inputs": {
-      "text": "nsfw, (worst quality:1.2), (low quality:1.2), (lowres:1.1), (monochrome:1.1), (greyscale),deformed, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, disgusting, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, doubled face, mutated hands,mutated fingers, multiple eyebrows, bad feet, bad leg, ((extra feet)), ((extra legs)), extra fingers, extra breast, watermark, username, signature, logo, multiple views, sketch, child, child face, midriff, abs, beard, facial hair, badhandsv5-neg, EasyNegative",
+      "text": "nsfw, (worst quality:1.2), (low quality:1.2), (lowres:1.1), (monochrome:1.1), text, signature, watermark, (greyscale),deformed, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, disgusting, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, doubled face, mutated hands,mutated fingers, multiple eyebrows, bad feet, bad leg, ((extra feet)), ((extra legs)), extra fingers, extra breast, watermark, username, signature, logo, multiple views, sketch, child, child face, midriff, abs, beard, facial hair, badhandsv5-neg, EasyNegative",
       "clip": [
         "16",
         1
@@ -49,7 +49,7 @@
   },
   "5": {
     "inputs": {
-      "seed": 201013139309507,
+      "seed": 21405619743647,
       "steps": 30,
       "cfg": 7,
       "sampler_name": "dpmpp_2m",
@@ -190,7 +190,7 @@
   },
   "15": {
     "inputs": {
-      "seed": 415242878603566,
+      "seed": 1008726402803123,
       "steps": 30,
       "cfg": 7,
       "sampler_name": "dpmpp_2m",
@@ -220,7 +220,7 @@
   },
   "16": {
     "inputs": {
-      "lora_name": "harry_potter_v1.safetensors",
+      "lora_name": "EmmaWatson.safetensors",
       "strength_model": 1,
       "strength_clip": 1,
       "model": [
@@ -239,7 +239,7 @@
   },
   "17": {
     "inputs": {
-      "lora_name": "EmmaWatson.safetensors",
+      "lora_name": "Hermione Granger2.safetensors",
       "strength_model": 1,
       "strength_clip": 1,
       "model": [
@@ -257,7 +257,28 @@
     }
   },
   "18": {
-    "inputs": {},
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "clip": [
+        "1",
+        1
+      ],
+      "vae": [
+        "1",
+        2
+      ],
+      "positive": [
+        "3",
+        0
+      ],
+      "negative": [
+        "4",
+        0
+      ]
+    },
     "class_type": "ToBasicPipe",
     "_meta": {
       "title": "ToBasicPipe"
@@ -280,7 +301,7 @@
       "guide_size": 384,
       "guide_size_for": true,
       "max_size": 1024,
-      "seed": 1036546504756375,
+      "seed": 133725014658585,
       "steps": 999,
       "cfg": 8,
       "sampler_name": "euler",
@@ -296,13 +317,17 @@
       "sam_dilation": 0,
       "sam_threshold": 0.93,
       "sam_bbox_expansion": 0,
-      "sam_mask_hint_threshold": 0.7000000000000001,
+      "sam_mask_hint_threshold": 0.7,
       "sam_mask_hint_use_negative": "False",
       "drop_size": 10,
       "wildcard": "",
       "cycle": 1,
       "inpaint_model": false,
       "noise_mask_feather": 20,
+      "image": [
+        "7",
+        0
+      ],
       "model": [
         "19",
         0
@@ -346,7 +371,7 @@
     "inputs": {
       "filename_prefix": "ComfyUI",
       "images": [
-        "7",
+        "20",
         0
       ]
     },
