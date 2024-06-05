@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    
     - name: Checkout
       uses: actions/checkout@v3
 
@@ -21,7 +20,15 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-northeast-2
 
+    - name: Get current commit SHA
+      id: vars
+      run: echo "commit=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
     # 실제로 코드를 배포한다.
     - name: Code Deploy
-      run: aws deploy create-deployment --application-name persona_letter --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name persona_letter_deploy
+      run: |
+        aws deploy create-deployment \
+          --application-name persona_letter \
+          --deployment-config-name CodeDeployDefault.OneAtATime \
+          --deployment-group-name persona_letter_deploy \
+          --revision "revisionType=GitHub,gitHubLocation={repository=${{ github.repository }},commitId=${{ env.commit }}}"
