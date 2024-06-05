@@ -1,4 +1,4 @@
-name: Persona Letter Backend CI/CD !
+name: Persona Letter Backend CI/CD 
 
 on:
   # main branch에 푸쉬할 때
